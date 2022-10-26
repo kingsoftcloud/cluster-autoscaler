@@ -42,7 +42,7 @@ To get the cluster-autoscaler image, please execute the `./build.sh`  commands i
     ```
 
 
-The above steps use Kingsoft Cloud Container Registry  (KCR) as an example registry.
+The above steps use Kingsoft Cloud Container Registry  [KCR](https://kce.console.ksyun.com/#/image/repository) as an example registry.
 
 ## Build Kubernetes Cluster on KEC 
 
