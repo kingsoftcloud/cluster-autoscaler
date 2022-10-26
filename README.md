@@ -104,6 +104,7 @@ cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1
     echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile
     source /etc/profile
     kubectl label node $HOSTNAME label=label1
+    
     ```
     
      The script help to join the new instance into the k8s cluster automatically.
