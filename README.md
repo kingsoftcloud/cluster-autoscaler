@@ -1,151 +1,235 @@
-# Cluster Autoscaler
+# Cluster Autoscaler on Kingsoft Cloud 
 
-# Introduction
+## Overview
+The cluster autoscaler works with self-built Kubernetes cluster on [ KEC](https://kec.console.ksyun.com/v2/#/kec) and
+specified [Kingsoft Cloud Auto Scaling Groups](https://kec.console.ksyun.com/as/#/group) . It runs as a Deployment on a worker node in the cluster. This README will go over some of the necessary steps required to get the cluster autoscaler up and running.
 
-Cluster Autoscaler is a tool that automatically adjusts the size of the Kubernetes cluster when one of the following conditions is true:
-* there are pods that failed to run in the cluster due to insufficient
-  resources.
-* there are nodes in the cluster that have been underutilized for an extended period of time and their pods can be placed on other existing nodes.
+## Deployment Steps
+### Build cluster-autoscaler Image
+#### Environment
+1. Download Project
 
-# FAQ/Documentation
+    Get the  cluster-autoscaler` project and download it. 
+    
+2. Go environment
 
-An FAQ is available [HERE](./FAQ.md).
+    Make sure you have Go installed in the above machine.
+    
+3. Docker environment
 
-You should also take a look at the notes and "gotchas" for your specific cloud provider:
-* [AliCloud](./cloudprovider/alicloud/README.md)
-* [Azure](./cloudprovider/azure/README.md)
-* [AWS](./cloudprovider/aws/README.md)
-* [BaiduCloud](./cloudprovider/baiducloud/README.md)
-* [CloudStack](./cloudprovider/cloudstack/README.md)
-* [HuaweiCloud](./cloudprovider/huaweicloud/README.md)
-* [Packet](./cloudprovider/packet/README.md#notes) 
-* [IonosCloud](./cloudprovider/ionoscloud/README.md)
+    Make sure you have Docker installed in the above machine.
+    
+#### Build and push the image
+To get the cluster-autoscaler image, please execute the `./build.sh`  commands in the directory of `cluster-autoscaler/cluster-autoscaler` of the cluster-autoscaler project downloaded previously. More specifically,
 
-# Releases
+1. Build the `cluster-autoscaler` binary:
+    ```
+    docker run --rm -e GOARCH=amd64(arm64)  -e GO111MODULE=auto -v $PWD:/go/src/k8s.io/autoscaler/cluster-autoscaler  golang:1.18.3  go build -o /go/src/k8s.io/autoscaler/cluster-autoscaler/build/docker/amd64/cluster-autoscaler /go/src/k8s.io/autoscaler/cluster-autoscaler/main.go
+    ```
+2. Build the docker image:
+    ```
+   docker build -t {Image repository address}/{Organization name}/{Image name:tag} ./build/docker/amd64(arm64)
+   ```
+   
+3. Login to KCR:
+    ```
+    docker login -u {Encoded username} -p {Encoded password} {KCR endpoint}
+    ```
+    
+4. Push the docker image to KCR:
+    ```
+    docker push {Image repository address}/{Organization name}/{Image name:tag}
+    ```
 
-We recommend using Cluster Autoscaler with the Kubernetes master version for which it was meant. The below combinations have been tested on GCP. We don't do cross version testing or compatibility testing in other environments. Some user reports indicate successful use of a newer version of Cluster Autoscaler with older clusters, however, there is always a chance that it won't work as expected.
 
-Starting from Kubernetes 1.12, versioning scheme was changed to match Kubernetes minor releases exactly.
+The above steps use Kingsoft Cloud Container Registry  (KCR) as an example registry.
 
-| Kubernetes Version  | CA Version   |
-|--------|--------|
-| 1.16.X | 1.16.X  |
-| 1.15.X | 1.15.X  |
-| 1.14.X | 1.14.X  |
-| 1.13.X | 1.13.X  |
-| 1.12.X | 1.12.X  |
-| 1.11.X | 1.3.X  |
-| 1.10.X | 1.2.X  |
-| 1.9.X  | 1.1.X  |
-| 1.8.X  | 1.0.X  |
-| 1.7.X  | 0.6.X  |
-| 1.6.X  | 0.5.X, 0.6.X<sup>*</sup>  |
-| 1.5.X  | 0.4.X  |
-| 1.4.X  | 0.3.X  |
+## Build Kubernetes Cluster on KEC 
 
-<sup>*</sup>Cluster Autoscaler 0.5.X is the official version shipped with k8s 1.6. We've done some basic tests using k8s 1.6 / CA 0.6 and we're not aware of any problems with this setup. However, Cluster Autoscaler internally simulates Kubernetes' scheduler and using different versions of scheduler code can lead to subtle issues.
+- Launch a new KEC instance as the master node.
 
-# Notable changes
+### 1. Install kubelet, kubeadm and kubectl   
 
-For CA 1.1.2 and later, please check [release
-notes.](https://github.com/kubernetes/autoscaler/releases)
+Please see installation [here](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/)
 
-CA version 1.1.1:
-* Fixes around metrics in the multi-master configuration.
-* Fixes for unready nodes issues when quota is overrun.
+### 2. Install Docker
+Please see installation [here](https://docs.docker.com/engine/install/)
 
-CA version 1.1.0:
-* Added [Azure support](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/azure/README.md).
-* Added support for pod priorities. More details [here](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-does-cluster-autoscaler-work-with-pod-priority-and-preemption).
+### 3. Initialize Cluster
+```bash
+kubeadm init
 
-CA version 1.0.3:
-* Adds support for safe-to-evict annotation on pod. Pods with this annotation
-  can be evicted even if they don't meet other requirements for it.
-* Fixes an issue when too many nodes with GPUs could be added during scale-up
-    (https://github.com/kubernetes/kubernetes/issues/54959).
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
 
-CA Version 1.0.2:
-* Fixes issues with scaling node groups using GPU from 0 to 1 on GKE (https://github.com/kubernetes/autoscaler/pull/401) and AWS (https://github.com/kubernetes/autoscaler/issues/321).
-* Fixes a bug where goroutines performing API calls were leaking when using dynamic config on AWS (https://github.com/kubernetes/autoscaler/issues/252).
-* Node Autoprovisioning support for GKE (the implementation was included in 1.0.0, but this release includes some bugfixes and introduces metrics and events).
+### 4. Install Flannel Network
+```bash 
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
+### 5. Generate Token
 
-CA Version 1.0.1:
-* Fixes a bug in handling nodes that, at the same time, fail to register in Kubernetes and can't be deleted from cloud provider (https://github.com/kubernetes/autoscaler/issues/369).
-* Improves estimation of resources available on a node when performing scale-from-0 on GCE (https://github.com/kubernetes/autoscaler/issues/326).
-* Bugfixes in the new GKE cloud provider implementation.
+Generate a token that never expires. Remember this token since it will be used later.
 
-CA Version 1.0:
+```bash
+kubeadm token create -ttl 0
+```
+Get hash key. Remember the key since it will be used later.
+```
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+```
 
-With this release we graduated Cluster Autoscaler to GA.
+### 6. Create OS Image with K8S Tools
+- Launch a new KEC instance and it into the k8s cluster.
 
-* Support for 1000 nodes running 30 pods each. See: [Scalability testing  report](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/proposals/scalability_tests.md)
-* Support for 10 min graceful termination.
-* Improved eventing and monitoring.
-* Node allocatable support.
-* Removed Azure support. See: [PR removing support with reasoning behind this decision](https://github.com/kubernetes/autoscaler/pull/229)
-* `cluster-autoscaler.kubernetes.io/scale-down-disabled` annotation for marking
-  nodes that should not be scaled down.
-* `scale-down-delay-after-delete` and `scale-down-delay-after-failure` flags
-    replaced `scale-down-trial-interval`
+    ```bash
+    kubeadm join --token $TOKEN $API_Server_EndPoint --discovery-token-ca-cert-hash $HASHKEY
+    ```
+- Copy `/etc/kubernetes/admin.conf` from master node to this KEC `/etc/kubernetes/admin.conf` to setup kubectl on this instance.
 
-CA Version 0.6:
-* Allows scaling node groups to 0 (currently only in GCE/GKE, other cloud providers are coming). See: [How can I scale a node group to 0?](FAQ.md#how-can-i-scale-a-node-group-to-0)
-* Price-based expander (currently only in GCE/GKE, other cloud providers are coming). See: [What are Expanders?](FAQ.md#what-are-expanders)
-* Similar node groups are balanced (to be enabled with a flag). See: [I'm running cluster with nodes in multiple zones for HA purposes. Is that supported by Cluster Autoscaler?](FAQ.md#im-running-cluster-with-nodes-in-multiple-zones-for-ha-purposes-is-that-supported-by-cluster-autoscaler)
-* It is possible to scale-down nodes with kube-system pods if PodDisruptionBudget is provided. See: [How can I scale my cluster to just 1 node?](FAQ.md#how-can-i-scale-my-cluster-to-just-1-node)
-* Automatic node group discovery on AWS (to be enabled with a flag). See: [AWS doc](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/cloudprovider/aws).
-* CA exposes runtime metrics. See: [How can I monitor Cluster Autoscaler?](FAQ.md#how-can-i-monitor-cluster-autoscaler)
-* CA exposes an endpoint for liveness probe.
-* max-grateful-termination-sec flag renamed to max-graceful-termination-sec.
-* Lower AWS API traffic to DescribeAutoscalingGroup.
+- Go to [ KEC](https://kec.console.ksyun.com/v2/#/kec) Service and select your KEC instance as source to create an OS image with K8S Tools.
 
-CA Version 0.5.4:
-* Fixes problems with node drain when pods are ignoring SIGTERM.
 
-CA Version 0.5.3:
-* Fixes problems with pod anti-affinity in scale up https://github.com/kubernetes/autoscaler/issues/33.
+### 7. Create AS Group
+ Go to [Kingsoft Cloud Auto Scaling Groups](https://kec.console.ksyun.com/as/#/group)  Service  to create an AS Group.
 
-CA Version 0.5.2:
-* Fixes problems with pods using persistent volume claims in scale up https://github.com/kubernetes/contrib/issues/2507.
+- While creating the `AS Configuration`, please select private image which we just created and add the following script into `userdata`.
+    ```bash
+    #!/bin/sh
+cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1
+    kubeadm reset -f                   
+    rm -rf $HOME/.kube
+    kubeadm join --token $TOKEN $API_Server_EndPoint --discovery-token-ca-cert-hash $HASHKEY
+    echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile
+    source /etc/profile
+    kubectl label node $HOSTNAME label=label1
+    ```
+    
+     The script help to join the new instance into the k8s cluster automatically.
+    
+ - Bind the AS Group with this AS Configuration.
 
-CA Version 0.5.1:
-* Fixes problems with slow network route creations on cluster scale up https://github.com/kubernetes/kubernetes/issues/43709.
+## Deploy Cluster Autoscaler Deployment
+### 1. Prepare Identity authentication
 
-CA Version 0.5:
-* CA continues to operate even if some nodes are unready and is able to scale-down them.
-* CA exports its status to kube-system/cluster-autoscaler-status config map.
-* CA respects PodDisruptionBudgets.
-* Azure support.
-* Alpha support for dynamic config changes.
-* Multiple expanders to decide which node group to scale up.
+​	 Use access-key-id and access-key-secret
 
-CA Version 0.4:
-* Bulk empty node deletions.
-* Better scale-up estimator based on binpacking.
-* Improved logging.
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloud-config
+  namespace: kube-system
+data:
+  # insert your base64 encoded Kcecloud access id and key here
+  # such as:  echo -n "your_access_key_id" | base64
+  access-key-id: "<BASE64_ACCESS_KEY_ID>"
+  access-key-secret: "<BASE64_ACCESS_KEY_SECRET>"
+  region-id: "<BASE64_REGION_ID>"
+```
 
-CA Version 0.3:
-* AWS support.
-* Performance improvements around scale down.
+### 2. Configure cluster-autoscaler deployment
 
-# Deployment
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cluster-autoscaler
+  name: cluster-autoscaler
+  namespace: kube-system
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: cluster-autoscaler
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: cluster-autoscaler
+    spec:
+      containers:
+        - command:
+            - ./cluster-autoscaler
+            - --v=5
+            - --logtostderr=true
+            - --cloud-provider=kce
+            - --expander=random
+            - --scale-down-enabled=true
+            - --skip-nodes-with-local-storage=false
+            - --stderrthreshold=info
+            - --nodes=[min]:[max]:[ASG_ID@label=value,label1=value1]
+            - --nodes=[min]:[max]:[ASG_ID]
+          env:
+            - name: endpoint
+              value: http://internal.api.ksyun.com/
+            - name: ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: access-key-id
+                  name: cloud-config
+            - name: ACCESS_KEY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: access-key-secret
+                  name: cloud-config
+            - name: REGION_ID
+              valueFrom:
+                secretKeyRef:
+                  key: region-id
+                  name: cloud-config
+          image: {Image repository address}/{Organization name}/{Image name:tag}
+          imagePullPolicy: Always
+          name: cluster-autoscaler
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: cluster-autoscaler
+      serviceAccountName: cluster-autoscaler
+      terminationGracePeriodSeconds: 30
+      tolerations:
+        - operator: Exists
 
-Cluster Autoscaler is designed to run on Kubernetes master node. This is the
-default deployment strategy on GCP.
-It is possible to run a customized deployment of Cluster Autoscaler on worker nodes, but extra care needs
-to be taken to ensure that Cluster Autoscaler remains up and running. Users can put it into kube-system
-namespace (Cluster Autoscaler doesn't scale down node with non-mirrored kube-system pods running
-on them) and set a `priorityClassName: system-cluster-critical` property on your pod spec
-(to prevent your pod from being evicted).
+```
 
-Supported cloud providers:
-* GCE https://kubernetes.io/docs/concepts/cluster-administration/cluster-management/
-* GKE https://cloud.google.com/container-engine/docs/cluster-autoscaler
-* AWS https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/aws/README.md
-* Azure https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/azure/README.md
-* Alibaba Cloud https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/alicloud/README.md
-* OpenStack Magnum https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/magnum/README.md
-* DigitalOcean https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/digitalocean/README.md
-* CloudStack https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/cloudstack/README.md
-* Exoscale https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/exoscale/README.md
-* Packet https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/cloudprovider/packet/README.md
+
+​     Change the image to the `cluster-autoscaler image` you just pushed. 
+
+​     The `--nodes` parameters should match the parameters of the AS Group you created.
+
+   ```
+   {Minimum number of nodes}:{Maximum number of nodes}:{AS Group ID}
+   ```
+ 	For ASG with labels, please use the following format:
+
+```
+{Minimum number of nodes}:{Maximum number of nodes}:{AS Group ID@label=value,label1=value1}
+```
+
+​     More configuration options can be added to the cluster autoscaler, such as `scale-down-delay-after-add`, `scale-down-unneeded-time`, etc. See available configuration options [here](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca).
+
+​    An example deployment file is provided at `cluster-autoscaler/cluster-autoscaler/examples/cluster-autoscaler-standard.yaml`. 
+
+### 3. Deploy cluster autoscaler on the cluster
+Login to the master node and run the following command:
+
+```
+kubectl create -f cluster-autoscaler-standard.yaml
+```
+
+## Support & Contact Info
+
+Interested in Cluster Autoscaler on KingSoft Cloud? Want to talk? Have questions, concerns or great ideas?
+
+Please reach out to us at `guotiandi@kingsoft.com`.
