@@ -1,7 +1,11 @@
 # Cluster Autoscaler on Kingsoft Cloud 
 
 ## Overview
-The cluster autoscaler works with self-built Kubernetes cluster on [ KEC](https://kec.console.ksyun.com/v2/#/kec) and
+| Kubernetes Version | CA Version |
+| ------------------ | ---------- |
+| 1.20.X             | 1.20.X     |
+
+The cluster autoscaler Version 1.20.X works with self-built Kubernetes cluster on [ KEC](https://kec.console.ksyun.com/v2/#/kec) and
 specified [Kingsoft Cloud Auto Scaling Groups](https://kec.console.ksyun.com/as/#/group) . It runs as a Deployment on a worker node in the cluster. This README will go over some of the necessary steps required to get the cluster autoscaler up and running.
 
 ## Deployment Steps
@@ -9,11 +13,7 @@ specified [Kingsoft Cloud Auto Scaling Groups](https://kec.console.ksyun.com/as/
 #### Environment
 1. Download Project
 
-    Get the  cluster-autoscaler` project and download it. 
-    
-2. Go environment
-
-    Make sure you have Go installed in the above machine.
+    Get the  `cluster-autoscaler` project and download it. 
     
 3. Docker environment
 
