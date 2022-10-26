@@ -91,7 +91,7 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 - Go to [ KEC](https://kec.console.ksyun.com/v2/#/kec) Service and select your KEC instance as source to create an OS image with K8S Tools.
 
 
-### 7. Create AS Group
+## Create AS Group
  Go to [Kingsoft Cloud Auto Scaling Groups](https://kec.console.ksyun.com/as/#/group)  Service  to create an AS Group.
 
 - While creating the `AS Configuration`, please select private image which we just created and add the following script into `userdata`.
