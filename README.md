@@ -103,8 +103,9 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
     kubeadm join --token $TOKEN $API_Server_EndPoint --discovery-token-ca-cert-hash $HASHKEY
     echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile
     source /etc/profile
-    kubectl label node $HOSTNAME label=label1
-    
+    #add labels if you need
+    kubectl label node $HOSTNAME label=value
+    kubectl label node $HOSTNAME label1=value1
     ```
     
      The script help to join the new instance into the k8s cluster automatically.
