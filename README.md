@@ -207,19 +207,19 @@ spec:
 
 ​     Change the image to the `cluster-autoscaler image` you just pushed. 
 
-​     The `--nodes` parameters should match the parameters of the AS Group you created.
+​     The `--nodes` parameter should match the parameters of the AS Group you created.
 
    ```
    {Minimum number of nodes}:{Maximum number of nodes}:{AS Group ID}
    ```
 
- 	For ASG with labels, please use the following format:
-
 ```
  {Minimum number of nodes}:{Maximum number of nodes}:{AS Group ID@label=value,label1=value1}
 ```
 
-​     More configuration options can be added to the cluster autoscaler, such as `scale-down-delay-after-add`, `scale-down-unneeded-time`, etc. See available configuration options [here](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca).
+​    For ASG with labels, please use the above format.
+
+​    More configuration options can be added to the cluster autoscaler, such as `scale-down-delay-after-add`, `scale-down-unneeded-time`, etc. See available configuration options [here](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca).
 
 ​    An example deployment file is provided at `cluster-autoscaler/cluster-autoscaler/examples/cluster-autoscaler-standard.yaml`. 
 
