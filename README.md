@@ -97,7 +97,7 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 - While creating the `AS Configuration`, please select private image which we just created and add the following script into `userdata`.
     ```bash
     #!/bin/sh
-cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1
+    cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1
     kubeadm reset -f                   
     rm -rf $HOME/.kube
     kubeadm join --token $TOKEN $API_Server_EndPoint --discovery-token-ca-cert-hash $HASHKEY
