@@ -213,8 +213,7 @@ spec:
    {Minimum number of nodes}:{Maximum number of nodes}:{AS Group ID}
    ```
    
- 	For ASG with labels, please use the following format:
-    
+​ 	For ASG with labels, please use the following format:
 
     ```
  {Minimum number of nodes}:{Maximum number of nodes}:{AS Group ID@label=value,label1=value1}
