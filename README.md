@@ -221,7 +221,7 @@ spec:
 
 ​    More configuration options can be added to the cluster autoscaler, such as `scale-down-delay-after-add`, `scale-down-unneeded-time`, etc. See available configuration options [here](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca).
 
-​    An example deployment file is provided at `cluster-autoscaler/cluster-autoscaler/examples/cluster-autoscaler-standard.yaml`. 
+​    An example deployment file is provided at `kce/examples/cluster-autoscaler-standard.yaml`. 
 
 ### 3. Deploy cluster autoscaler on the cluster
 Login to the master node and run the following command:
