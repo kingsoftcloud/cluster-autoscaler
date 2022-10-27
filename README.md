@@ -232,6 +232,7 @@ kubectl create -f cluster-autoscaler-standard.yaml
 ```
 ## Notes
 If the `cluster-autoscale` component not scale-up or scale-down for a long time, execute the `kubectl get cm cluster autoscale status - n kube system - o yaml`command to check whether the cluster status is healthy. When the number of unready nodes in the cluster reaches a certain level, the cluster will be unhealthy, and the `cluster-autoscal` component will stop scale-up and scale-down. Please refer to [How does CA deal with unready nodes?] ( https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md )
+
 If the userdata set in the AS configuration does not take effect, log in to the instance under the corresponding ASG and check whether there are errors in the /var/log/cloud-init.log file. Also, please do not edit the userdata in the AS configuration on the AS service page, because the changes will not take effect.
 
 ## Support & Contact Info
