@@ -5,15 +5,15 @@
 | ------------------ | ---------- |
 | 1.20             | 1.20.3     |
 
-The Cluster Autoscaler Version 1.20.X works with self-built Kubernetes cluster on [ KEC](https://kec.console.ksyun.com/v2/#/kec) and
-specified [Kingsoft Cloud Auto Scaling](https://kec.console.ksyun.com/as/#/group) . It runs as a Deployment on a worker node in the cluster. This README will go over some of the necessary steps required to get the cluster autoscaler up and running.
+The Cluster Autoscaler Version 1.20.X works with self-built Kubernetes cluster on [KEC](https://kec.console.ksyun.com/v2/#/kec) and
+specified [Kingsoft Cloud Auto Scaling](https://kec.console.ksyun.com/as/#/group). It runs as a Deployment on a worker node in the cluster. This README will go over some of the necessary steps required to get the cluster autoscaler up and running.
 
 ## Deployment Steps
 ### Build cluster-autoscaler Image
 #### Environment
 1. Download Project
 
-    Get the  `cluster-autoscaler` project and download it. 
+    Get the `cluster-autoscaler` project and download it. 
     
 3. Docker environment
 
