@@ -231,7 +231,7 @@ Login to the master node and run the following command:
 kubectl create -f cluster-autoscaler-standard.yaml
 ```
 ## Notes
-If the `cluster-autoscale` component not scale-up or scale-down for a long time, execute the [kubectl get cm cluster-autoscaler-status  -n kube-system -o yaml ] command to check whether the cluster status is healthy. When the number of unready nodes in the cluster reaches a certain level, the cluster will be unhealthy and the `cluster-autoscaler` component will stop work. Please refer to [How does CA deal with unready nodes?]( https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md)
+If the `cluster-autoscaler` component not scale-up or scale-down for a long time, execute the [kubectl get cm cluster-autoscaler-status  -n kube-system -o yaml ] command to check whether the cluster status is healthy. When the number of unready nodes in the cluster reaches a certain level, the cluster will be unhealthy and the `cluster-autoscaler` component will stop work. Please refer to [How does CA deal with unready nodes?]( https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md)
 
 If you click the remove button on the Auto Scaling service console to remove the node from the scaling group, the node will be marked as unready by the `cluster-autoscaler` component. To avoid this risk, please execute the [kubectl delete node node_name] command in the cluster after the above removal operation.
 
