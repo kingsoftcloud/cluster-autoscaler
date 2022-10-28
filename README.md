@@ -1,11 +1,11 @@
 # Cluster Autoscaler on Kingsoft Cloud 
 
 ## Overview
-| Kubernetes Version | CA Version |
+| Kubernetes Version | Cluster Autoscaler Version |
 | ------------------ | ---------- |
 | 1.20.X             | 1.20.X     |
 
-The cluster autoscaler Version 1.20.X works with self-built Kubernetes cluster on [ KEC](https://kec.console.ksyun.com/v2/#/kec) and
+The Cluster Autoscaler Version 1.20.X works with self-built Kubernetes cluster on [ KEC](https://kec.console.ksyun.com/v2/#/kec) and
 specified [Kingsoft Cloud Auto Scaling](https://kec.console.ksyun.com/as/#/group) . It runs as a Deployment on a worker node in the cluster. This README will go over some of the necessary steps required to get the cluster autoscaler up and running.
 
 ## Deployment Steps
@@ -92,7 +92,7 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 
 
 ## Create AS Group
- Go to [Kingsoft Cloud Auto Scaling](https://kec.console.ksyun.com/as/#/group)  Service  to create an AS Group.
+ Go to [Kingsoft Cloud Auto Scaling](https://kec.console.ksyun.com/as/#/group) service to create an AS Group.
 
 - While creating the `AS Configuration`, please select private image which we just created and add the following script into `UserData`.
     ```bash
