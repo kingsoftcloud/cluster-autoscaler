@@ -26,7 +26,7 @@ const (
 )
 // kceCloudProvider implements CloudProvider interface.
 type KceCloudProvider struct {
-	kceManager      *KceManager   //根据账号密码，构建 awsManager 对象来操作 aws 资源
+	kceManager      *KceManager   
 	resourceLimiter *cloudprovider.ResourceLimiter
 	Asgs            []*KceNodeGroup
 
