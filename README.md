@@ -218,7 +218,7 @@ spec:
  {Minimum number of nodes}:{Maximum number of nodes}:{AS Group ID@label=value,label1=value1}
 ```
 
-​    For ASG with labels, please use the above format.
+​    For AS Group with labels, please use the above format.
 
 ​    More configuration options can be added to the cluster autoscaler, such as `scale-down-delay-after-add`, `scale-down-unneeded-time`, etc. See available configuration options [here](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca).
 
@@ -235,7 +235,7 @@ If the `cluster-autoscale` component not scale-up or scale-down for a long time,
 
 If you click the remove button on the Auto Scaling service console to remove the node from the scaling group, the node will be marked as unready by the `cluster-autoscaler` component. To avoid this risk, please execute the [kubectl delete node node_name] command in the cluster after the above removal operation.
 
-If the UserData set in the AS configuration does not take effect, log in to the instance under the corresponding ASG and check whether there are errors in the /var/log/cloud-init.log file. Also, please do not edit the UserData in the AS configuration on the Auto Scaling service console, because the changes will not take effect.
+If the UserData set in the AS configuration does not take effect, log in to the instance under the corresponding AS Group and check whether there are errors in the /var/log/cloud-init.log file. Also, please do not edit the UserData in the AS configuration on the Auto Scaling service console, because the changes will not take effect.
 
 ## Support & Contact Info
 
