@@ -271,7 +271,7 @@ spec:
                 secretKeyRef:
                   key: region-id
                   name: cloud-config
-          image: hub.kce.ksyun.com/golang/ca-new:nodes33
+          image: hub.kce.ksyun.com/golang/ca-new:git8
           imagePullPolicy: Always
           name: cluster-autoscaler
           resources: {}
