@@ -6,7 +6,7 @@
 | 1.20.X             | 1.20.X     |
 
 The cluster autoscaler Version 1.20.X works with self-built Kubernetes cluster on [ KEC](https://kec.console.ksyun.com/v2/#/kec) and
-specified [Kingsoft Cloud Auto Scale](https://kec.console.ksyun.com/as/#/group) . It runs as a Deployment on a worker node in the cluster. This README will go over some of the necessary steps required to get the cluster autoscaler up and running.
+specified [Kingsoft Cloud Auto Scaling](https://kec.console.ksyun.com/as/#/group) . It runs as a Deployment on a worker node in the cluster. This README will go over some of the necessary steps required to get the cluster autoscaler up and running.
 
 ## Deployment Steps
 ### Build cluster-autoscaler Image
@@ -44,7 +44,7 @@ To get the cluster-autoscaler image, please execute the `./build.sh`  commands i
 
 The above steps use Kingsoft Cloud Container Registry  [KCR](https://kce.console.ksyun.com/#/image/repository) as an example registry.
 
-## Build Kubernetes Cluster on KEC 
+## Build Kubernetes Cluster on [KEC](https://kec.console.ksyun.com/v2/#/kec) 
 
 - Launch a new KEC instance as the master node.
 
@@ -92,9 +92,9 @@ openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outfor
 
 
 ## Create AS Group
- Go to [Kingsoft Cloud Auto Scale](https://kec.console.ksyun.com/as/#/group)  Service  to create an AS Group.
+ Go to [Kingsoft Cloud Auto Scaling](https://kec.console.ksyun.com/as/#/group)  Service  to create an AS Group.
 
-- While creating the `AS Configuration`, please select private image which we just created and add the following script into `userdata`.
+- While creating the `AS Configuration`, please select private image which we just created and add the following script into `UserData`.
     ```bash
     #!/bin/sh
     cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1
@@ -231,12 +231,10 @@ Login to the master node and run the following command:
 kubectl create -f cluster-autoscaler-standard.yaml
 ```
 ## Notes
-If the `cluster-autoscale` component not scale-up or scale-down for a long time, execute the `kubectl get cm cluster autoscale status - n kube system - o yaml`command to check whether the cluster status is healthy. When the number of unready nodes in the cluster reaches a certain level, the cluster will be unhealthy, and the `cluster-autoscal` component will stop scale-up and scale-down. Please refer to [How does CA deal with unready nodes?] ( https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md )
+If the `cluster-autoscale` component not scale-up or scale-down for a long time, execute the [kubectl get cm cluster-autoscaler-status  -n kube-system -o yaml ] command to check whether the cluster status is healthy. When the number of unready nodes in the cluster reaches a certain level, the cluster will be unhealthy, and the `cluster-autoscal` component will stop scale-up and scale-down. Please refer to [How does CA deal with unready nodes?]( https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md )
 
-If the userdata set in the AS configuration does not take effect, log in to the instance under the corresponding ASG and check whether there are errors in the /var/log/cloud-init.log file. Also, please do not edit the userdata in the AS configuration on the AS service page, because the changes will not take effect.
+If the UserData set in the AS configuration does not take effect, log in to the instance under the corresponding ASG and check whether there are errors in the /var/log/cloud-init.log file. Also, please do not edit the UserData in the AS configuration on the AS service page, because the changes will not take effect.
 
 ## Support & Contact Info
 
-Interested in Cluster Autoscaler on KingSoft Cloud? Want to talk? Have questions, concerns or great ideas?
-
-Please reach out to us at `guotiandi@kingsoft.com`.
+Interested in Cluster Autoscaler on KingSoft Cloud? Want to talk? Have questions, concerns or great ideas? Please reach out to us at `guotiandi@kingsoft.com`.
