@@ -58,7 +58,7 @@ func buildOpenApiRequestWithBodyReader(serviceName, region, securityToken string
 
 func DoRequest(client *Client, query, postBody string) ([]byte, error) {
 	s := v4.Signer{Credentials: credentials.NewStaticCredentials(client.CloudConfig.AccessKeyID, client.CloudConfig.AccessKeySecret, "")}
-	req, body := buildOpenApiRequest("kce", client.RegionId, postBody, "client.CloudConfig.SecurityToken")
+	req, body := buildOpenApiRequest("kce", client.RegionId, postBody, client.CloudConfig.SecurityToken)
 	if len(query) > 0 {
 		req.URL.RawQuery = query
 	}
