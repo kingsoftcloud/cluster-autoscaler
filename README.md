@@ -21,7 +21,6 @@ $ sudo yum-config-manager \
 # 安装最新版本的 Docker Engine 和 containerd
 $ sudo yum install docker-ce docker-ce-cli containerd.io
 
-# 想要指定版本安装的话，=============================================
 # 查看docker-ce支持版本
 $ sudo yum list docker-ce --showduplicates|sort -r
 #查看docker-ce-cli版本
