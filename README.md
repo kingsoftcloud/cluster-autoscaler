@@ -176,7 +176,7 @@ docker push hub.kce.ksyun.com/golang/ca-new:version
 
 用户自定义数据(提供给实例启动时使用的用户自定义数据),支持的最大数据大小为 16KB。
 
-![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=NzZkYjdmYjgyZjY4NDZlMjY3ODhjN2RkZWZmODYwZGVfWjhBU0tjRmRVTjFRMHJtUEN0d0FKNkcxMGtaSXhFbmJfVG9rZW46Ym94Y25iYWx4bUVJdkFCd0VPM1h6c3gzRE1oXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
+![img](https://github.com/kingsoftcloud/cluster-autoscaler/blob/cluster-autoscaler-kce-1.20.3/images/config.png)
 
 ```Go
 #!/bin/sh
@@ -211,7 +211,7 @@ kubectl label node $HOSTNAME label=label1
 
 ## 3.2 创建伸缩组
 
-![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=ZGI4OTRiMGUyMzY3Yzk3Mjg1YjlhYTY2ZjgwNmM5M2RfajF5THhEbG5tSFk4Rm1iUERqbjZiUG1QVDhHSm5LWHVfVG9rZW46Ym94Y25nZnpQeGQ2MUk4bk5iTjVvVng0cjJiXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
+![img](https://github.com/kingsoftcloud/cluster-autoscaler/blob/cluster-autoscaler-kce-1.20.3/images/asg.png)
 
 在控制台可以看到我创建的伸缩组的ID为784216551637458944
 
@@ -219,7 +219,7 @@ kubectl label node $HOSTNAME label=label1
 
 查看ID为784216551637458944的ASG中的这一台云主机是否成功加入集群
 
-![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=NTRiOWRmOWFhNGQyMjFiNTI1ZjBlZWI2ZThmMGQ4ZDhfcFFRZ3RON2h0cUF5Z1kxdHFTNHpuSnh0eFhuUEk3QmhfVG9rZW46Ym94Y25scjFMeEFaaDZDUEx4WGFxZm4zU3VoXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
+![img](https://github.com/kingsoftcloud/cluster-autoscaler/blob/cluster-autoscaler-kce-1.20.3/images/cluster.png)
 
 假如失败了，请检查上述操作规范性。也可以登录到该云主机上，通过查看/var/log/cloud-init.log的文件内容，分析UserData没有生效的原因。需要注意的是：请不要直接对启动配置中的UserData数据进行修改，因为这不会生效。
 
@@ -231,7 +231,7 @@ kubectl label node $HOSTNAME label=label1
 
 地域（region）代码：
 
-   ![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=YjFjZjM2NTVlZGYyNGQ3YTM3M2QwZDczYTQyNTIyNTBfQ0lnNWtqd3dpYUFLZDFsblZPZU9YcE5kZEpuQnEyU0JfVG9rZW46Ym94Y25VbnJMSUpYcG5yc3J3WEZ1RWRMbFdjXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
+   ![img](https://github.com/kingsoftcloud/cluster-autoscaler/blob/cluster-autoscaler-kce-1.20.3/images/region.png)
 
 ```Go
     apiVersion: v1
