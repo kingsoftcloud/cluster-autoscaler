@@ -137,11 +137,11 @@ git clone -b cluster-autoscaler-kce-1.20.3 https://github.com/kingsoftcloud/clus
 ```Go
 docker run --rm -e GOARCH=amd64  -e GO111MODULE=auto -v $PWD:/go/src/k8s.io/autoscaler/cluster-autoscaler  golang:1.18.3  go build -o /go/src/k8s.io/autoscaler/cluster-autoscaler/build/docker/amd64/cluster-autoscaler /go/src/k8s.io/autoscaler/cluster-autoscaler/main.go
 
-docker build -t kse/cluster-autoscaler:vv31 ./build/docker/amd64
+docker build -t kse/cluster-autoscaler:version ./build/docker/amd64
 
-docker tag kse/cluster-autoscaler:vv31  hub.kce.ksyun.com/golang/ca-new:vv31
+docker tag kse/cluster-autoscaler:version  hub.kce.ksyun.com/golang/ca-new:version
 
-docker push hub.kce.ksyun.com/golang/ca-new:vv31
+docker push hub.kce.ksyun.com/golang/ca-new:version
 ```
 
 命令解释：
