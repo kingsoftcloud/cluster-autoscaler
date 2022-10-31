@@ -70,15 +70,25 @@ type TemplateResponse struct {
 	ScalingConfigurationSet []*ScalingConfigurationSet `json:"ScalingConfigurationSet"`
 }
 
+//type CheckCanSellResponse struct {
+//	RequestId     string           `json:"RequestId"`
+//	CanSellAsgSet []CanSellAsgItem `json:"AutoScalingGroupCanSellSet"`
+//}
+
 type CheckCanSellResponse struct {
 	RequestId     string           `json:"RequestId"`
-	CanSellAsgSet []CanSellAsgItem `json:"AutoScalingGroupCanSellSet"`
+	CanSellAsgSet []CanSellAsgItem `json:"ScalingGroupSet"`
 }
 
 type CanSellAsgItem struct {
-	AutoScalingGroupId string `json:"AutoScalingGroupId"`
-	CanSell            bool   `json:"CanSell"`
+	ScalingGroupId 	   string `json:"ScalingGroupId"`
+	CanSell            string   `json:"Status"`
 }
+
+//type CanSellAsgItem struct {
+//	AutoScalingGroupId string `json:"AutoScalingGroupId"`
+//	CanSell            bool   `json:"CanSell"`
+//}
 
 type ScalingConfigurationSet struct {
 	VCPU             int64  `json:"Cpu,string"`
@@ -351,7 +361,8 @@ func (a *autoScalingWrapper) ValidateAsg(asg * kce_asg.KceAsg) bool {
 		klog.Errorf("invalid asg %s, error: %v", asg.Name, err)
 		return false
 	}
-	if len(resp.CanSellAsgSet) == 0 || !resp.CanSellAsgSet[0].CanSell {
+	//if len(resp.CanSellAsgSet) == 0 || !resp.CanSellAsgSet[0].CanSell{
+	if len(resp.CanSellAsgSet) == 0 || resp.CanSellAsgSet[0].CanSell!="Active" {
 		klog.Errorf("invalid asg %s, error: asg can't sell", asg.Name)
 		return false
 	}
