@@ -168,7 +168,7 @@ docker push hub.kce.ksyun.com/golang/ca-new:version
 
 # 三、创建伸缩组
 
-在AS控制台(https://kec.console.ksyun.com/as/#/create/group/)创建伸缩组，包含以下两个步骤：
+在[AS控制台](https://kec.console.ksyun.com/as/#/create/group/)创建伸缩组，包含以下两个步骤：
 
 ## 3.1 创建启动配置
 
