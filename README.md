@@ -545,8 +545,12 @@ nodes=0:10:4343545432
 UserData设置为：
 
 ```
-#!/bin/sh                                                                                 cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          kubeadm reset -f                                                                          rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
-echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     source /etc/profile
+#!/bin/sh                                                                                 
+cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          
+kubeadm reset -f                                                                          
+rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     
+source /etc/profile
 ```
 
 集群里有多个ASG时：
@@ -564,8 +568,12 @@ nodes=0:10:4343545432@label=value
 UserData设置为：
 
 ```
-#!/bin/sh                                                                                 cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          kubeadm reset -f                                                                          rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
-echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     source /etc/profile
+#!/bin/sh                                                                                 
+cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          
+kubeadm reset -f                                                                          
+rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     
+source /etc/profile
 kubectl label node $HOSTNAME label=value
 ```
 
@@ -576,13 +584,17 @@ nodes=0:10:4343545432@label=value,label1=value1
 UserData设置为：
 
 ```
-#!/bin/sh                                                                                 cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          kubeadm reset -f                                                                          rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
-echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     source /etc/profile
+#!/bin/sh                                                                                 
+cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          
+kubeadm reset -f                                                                          
+rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     
+source /etc/profile
 kubectl label node $HOSTNAME label=value
 kubectl label node $HOSTNAME label1=value1
 ```
 
-缩容相关参数介绍：
+缩容相关参数介绍如下：
 
 ​     在节点上运行的所有 pod 的 cpu、memory的总和 < 节点可分配总额的 50%时自动缩容,其中一个Node从检查出空闲，持续10min时间内依然空闲，才会被真正移除（所有参数都可定制）
 
