@@ -538,7 +538,8 @@ kubectl label node $HOSTNAME label=label1
 
 在执行kubectl apply -f ca.yml之前，请根据您创建的ASG的ID等信息更新nodes参数
 
-集群里只有1个ASG时：
+- 集群里只有1个ASG时：
+
 
 nodes=0:10:4343545432
 
@@ -553,7 +554,8 @@ echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile
 source /etc/profile
 ```
 
-集群里有多个ASG时：
+- 集群里有多个ASG时：
+
 
 nodes=0:10:4343545432
 
@@ -561,7 +563,8 @@ nodes=0:10:4396783032
 
 UserData设置类似集群里只有1个ASG
 
-当ASG带有1个标签时：
+- 当ASG带有1个标签时：
+
 
 nodes=0:10:4343545432@label=value
 
@@ -577,7 +580,8 @@ source /etc/profile
 kubectl label node $HOSTNAME label=value
 ```
 
-当ASG带有多个标签时，多个标签之间使用逗号分割：
+- 当ASG带有多个标签时，多个标签之间使用逗号分割：
+
 
 nodes=0:10:4343545432@label=value,label1=value1    
 
