@@ -575,9 +575,11 @@ kubectl edit deploy cluster-autoscaler -n kube-system
 
 缩容相关日志
 
-kubectl logs -f cluster-autoscaler-5df855f68b-2qwkx -n kube-system|grep "scale down" 扩容相关日志
+kubectl logs -f cluster-autoscaler-5df855f68b-2qwkx -n kube-system|grep "scale down" 
 
-kubectl logs -f cluster-autoscaler-5df855f68b-2qwkx -n kube-system|grep "scale_up.go
+扩容相关日志
+
+kubectl logs -f cluster-autoscaler-5df855f68b-2qwkx -n kube-system|grep "scale_up.go"
 
 ## 4.5 测试
 
@@ -625,4 +627,4 @@ kubectl delete -f books.yml
 
 # 五、注意事项：
 
-手动在AS控制台(而不是ca组件缩容)移除ASG里的node以后，该node会被ca组件标记为unready状态，因此手动在AS控制台移除ASG里的node以后，请在集群中执行kubectl delete node node-name删除该 node。通过kubectl get cm cluster-autoscaler-status -n kube-system -o yaml命令可以观测到被ca组件标记为unready的node的数量。unready的node数量超过ca组件设置的限制，ca组件将会停止工作。详见https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md。
+手动在AS控制台(而不是ca组件缩容)移除ASG里的node以后，该node会被ca组件标记为unready状态，因此手动在AS控制台移除ASG里的node以后，请在集群中执行kubectl delete node node-name删除该 node。通过kubectl get cm cluster-autoscaler-status -n kube-system -o yaml命令可以观测到被ca组件标记为unready的node的数量。unready的node数量超过ca组件设置的限制，ca组件将会停止工作。详见[How does CA deal with unready nodes?](https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md#how-does-ca-deal-with-unready-nodes)。
