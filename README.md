@@ -537,7 +537,7 @@ kubectl label node $HOSTNAME label=label1
 ```
 
 
-在执行kubectl apply -f ca.yml之前，请根据您创建的ASG的ID等信息更新nodes=MinSize:MaxSize:ASG_ID@label=value,label1=value1
+在执行kubectl apply -f ca.yml之前，请根据您创建的ASG的ID等信息更新nodes参数
 
 |                         | nodes                                                        | UserData                                                     |
 | ----------------------- | :----------------------------------------------------------- | ------------------------------------------------------------ |
