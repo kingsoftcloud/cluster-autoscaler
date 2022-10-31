@@ -517,7 +517,7 @@ kubectl label node $HOSTNAME label=label1
                     secretKeyRef:
                       key: region-id
                       name: cloud-config
-              image: hub.kce.ksyun.com/golang/ca-new:git8
+              image: hub.kce.ksyun.com/golang/ca-new:1031
               imagePullPolicy: Always
               name: cluster-autoscaler
               resources: {}
