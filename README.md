@@ -536,28 +536,57 @@ kubectl label node $HOSTNAME label=label1
             - operator: Exists
 ```
 
-
 在执行kubectl apply -f ca.yml之前，请根据您创建的ASG的ID等信息更新nodes参数
 
-|                         | nodes                                                        | UserData                                                     |
-| ----------------------- | :----------------------------------------------------------- | ------------------------------------------------------------ |
-| 设置1个ASG              | nodes=0:10:4343545432                                        | #!/bin/sh                                                                                                                                                cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          kubeadm reset -f                                                                                                                                      rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt     --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                          source /etc/profile |
-| 设置多个ASG时           | nodes=0:10:4343545432            nodes=0:10:4396783032       | 类似上面                                                     |
-| 设置带有一个标签的ASG时 | nodes=0:10:4343545432@label=value                            | #!/bin/sh                                                                                                                                                     cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                                          kubeadm reset -f                                                                                                                                       rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt     --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                             source /etc/profile                                                                                                                             kubectl label node $HOSTNAME label=value |
-| 设置带有多个标签的ASG时 | nodes=0:10:4343545432@label=value,label1=value1多个标签之间使用逗号分 | #!/bin/sh                                                                                                                                                        cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                                              kubeadm reset -f                                                                                                                                           rm -rf $HOME/.kube                                                                                                                       kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt     --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                                                 source /etc/profile                                                                                                                             kubectl label node $HOSTNAME label=value                                                                                                   kubectl label node $HOSTNAME label1=value1 |
+集群里只有1个ASG时：
 
-其他参数：
+nodes=0:10:4343545432
+
+UserData设置为：
+
+```
+#!/bin/sh                                                                                 cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          kubeadm reset -f                                                                          rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     source /etc/profile
+```
+
+集群里有多个ASG时：
+
+nodes=0:10:4343545432
+
+nodes=0:10:4396783032
+
+UserData设置类似集群里只有1个ASG
+
+当ASG带有1个标签时：
+
+nodes=0:10:4343545432@label=value
+
+UserData设置为：
+
+```
+#!/bin/sh                                                                                 cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          kubeadm reset -f                                                                          rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     source /etc/profile
+kubectl label node $HOSTNAME label=value
+```
+
+当ASG带有多个标签时，多个标签之间使用逗号分割：
+
+nodes=0:10:4343545432@label=value,label1=value1    
+
+UserData设置为：
+
+```
+#!/bin/sh                                                                                 cp  /etc/kubernetes/admin.conf /etc/kubernetes/admin.conf1                          kubeadm reset -f                                                                          rm -rf $HOME/.kube kubeadm join [10.5.34.85:6443](http://10.5.34.85:6443) --token mfxeqg.027w04r1p1b72xwt --discovery-token-ca-cert-hash sha256:9480fe409b09c917c2d435e2543cf9f4ccfb2a5cb2c5da8a4e8dd5e9aab3df10 
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf1" >> /etc/profile                     source /etc/profile
+kubectl label node $HOSTNAME label=value
+kubectl label node $HOSTNAME label1=value1
+```
+
+缩容相关参数介绍：
 
 ​     在节点上运行的所有 pod 的 cpu、memory的总和 < 节点可分配总额的 50%时自动缩容,其中一个Node从检查出空闲，持续10min时间内依然空闲，才会被真正移除（所有参数都可定制）
 
-| --max-empty-bulk-delete=10            | 最大缩容并发数，可以同时缩容的最大空节点数，如果存在pod，每次缩容最多一个节点 |
-| ------------------------------------- | ------------------------------------------------------------ |
-| --scale-down-delay-after-add=10m0s    | 集群扩容10分钟后，开始判断缩容条件                           |
-| --scale-down-enabled=true             | 开启缩容                                                     |
-| --scale-down-unneeded-time=10m0s      | 节点满足缩容条件10分钟后，开始缩容                           |
-| --scale-down-utilization-threshold=50 | 节点已经分配的资源占可分配资源<50%时，开始判断缩容条件       |
-| --max-total-unready-percentage=45     | Maximum percentage of unready nodes in the cluster.  After this is exceeded, CA halts operations被ca组件标记为unready的node数量超过总node数量的45%，ca组件停止工作执行kubectl get cm cluster-autoscaler-status -n kube-system -o yaml命令，能够看到被ca组件标记为unready的node数量 |
-| --ok-total-unready-count=3            | Number of allowed unready nodes, irrespective of max-total-unready-percentage允许的unready节点数，不考虑max-total-unready-percentage |
+![img](https://github.com/kingsoftcloud/cluster-autoscaler/blob/cluster-autoscaler-kce-1.20.3/images/scaledown.jpg)
 
 ## 4.4 验证
 
