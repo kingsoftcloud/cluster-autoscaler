@@ -232,11 +232,11 @@ kubectl label node $HOSTNAME label=label1
 
 地域（region）代码：
 
-  - ![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=YjFjZjM2NTVlZGYyNGQ3YTM3M2QwZDczYTQyNTIyNTBfQ0lnNWtqd3dpYUFLZDFsblZPZU9YcE5kZEpuQnEyU0JfVG9rZW46Ym94Y25VbnJMSUpYcG5yc3J3WEZ1RWRMbFdjXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
+   ![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=YjFjZjM2NTVlZGYyNGQ3YTM3M2QwZDczYTQyNTIyNTBfQ0lnNWtqd3dpYUFLZDFsblZPZU9YcE5kZEpuQnEyU0JfVG9rZW46Ym94Y25VbnJMSUpYcG5yc3J3WEZ1RWRMbFdjXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
 
-  - 
+  
 
-  - ```Go
+   ```Go
     apiVersion: v1
     kind: Secret
     metadata:
@@ -250,11 +250,11 @@ kubectl label node $HOSTNAME label=label1
       region-id: "<BASE64_REGION_ID>"
     ```
 
-  -   kubectl apply -f cloud-config.yml
+    kubectl apply -f cloud-config.yml
 
-  - ## 4.2 创建ServiceAccount和Role等
+   ## 4.2 创建ServiceAccount和Role等
 
-  - ```Go
+   ```Go
     ---
     apiVersion: v1
     kind: ServiceAccount
@@ -463,11 +463,11 @@ kubectl label node $HOSTNAME label=label1
         namespace: kube-system
     ```
 
-  -   kubectl apply -f role.yml
+   kubectl apply -f role.yml
 
-  - ## 4.3 创建Deployment
+   ## 4.3 创建Deployment
 
-  - ```Go
+   ```Go
     apiVersion: apps/v1
     kind: Deployment
     metadata:
