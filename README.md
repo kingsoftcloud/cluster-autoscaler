@@ -228,9 +228,9 @@ kubectl label node $HOSTNAME label=label1
 
 ## 4.1 创建Secret
 
-- -   创建AK SK的方法参见https://docs.ksyun.com/documents/40311
+创建AK SK的方法参见https://docs.ksyun.com/documents/40311
 
-  -   地域（region）代码：
+地域（region）代码：
 
   - ![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=YjFjZjM2NTVlZGYyNGQ3YTM3M2QwZDczYTQyNTIyNTBfQ0lnNWtqd3dpYUFLZDFsblZPZU9YcE5kZEpuQnEyU0JfVG9rZW46Ym94Y25VbnJMSUpYcG5yc3J3WEZ1RWRMbFdjXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
 
