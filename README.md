@@ -234,9 +234,7 @@ kubectl label node $HOSTNAME label=label1
 
    ![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=YjFjZjM2NTVlZGYyNGQ3YTM3M2QwZDczYTQyNTIyNTBfQ0lnNWtqd3dpYUFLZDFsblZPZU9YcE5kZEpuQnEyU0JfVG9rZW46Ym94Y25VbnJMSUpYcG5yc3J3WEZ1RWRMbFdjXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
 
-  
-
-   ```Go
+```Go
     apiVersion: v1
     kind: Secret
     metadata:
@@ -248,14 +246,13 @@ kubectl label node $HOSTNAME label=label1
       access-key-id: "<BASE64_ACCESS_KEY_ID>"
       access-key-secret: "<BASE64_ACCESS_KEY_SECRET>"
       region-id: "<BASE64_REGION_ID>"
-    ```
-
+```
+执行命令：
     kubectl apply -f cloud-config.yml
 
    ## 4.2 创建ServiceAccount和Role等
 
-   ```Go
-    ---
+```Go
     apiVersion: v1
     kind: ServiceAccount
     metadata:
@@ -461,13 +458,13 @@ kubectl label node $HOSTNAME label=label1
       - kind: ServiceAccount
         name: cluster-autoscaler
         namespace: kube-system
-    ```
-
+```
+执行以下命令：
    kubectl apply -f role.yml
 
    ## 4.3 创建Deployment
 
-   ```Go
+```Go
     apiVersion: apps/v1
     kind: Deployment
     metadata:
@@ -538,7 +535,8 @@ kubectl label node $HOSTNAME label=label1
           terminationGracePeriodSeconds: 30
           tolerations:
             - operator: Exists
-    ```
+```
+
 
 在执行kubectl apply -f ca.yml之前，请根据您创建的ASG的ID等信息更新nodes=MinSize:MaxSize:ASG_ID@label=value,label1=value1
 
