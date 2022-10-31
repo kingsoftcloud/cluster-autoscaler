@@ -120,7 +120,7 @@ kubectl apply -f kube-flannel.yml
 
 在KEC控制台，首先点击IP为[10.5.34.85](http://10.5.34.85:6443)的云主机一栏的 更多按钮->制作镜像按钮，然后填写镜像名称等，开始制作镜像。我创建的镜像名称为kube-scheduler。
 
-![img](https://kingsoft-cloud.feishu.cn/space/api/box/stream/download/asynccode/?code=NGM3MzEzMTkwMmFlNTg2ZjMyZWQ3ZjllYzk2ZTRjMjVfMDNsM3U3S3hXTVJ0U1M4bmM5cjM4M3VCalBHMlE0ZkZfVG9rZW46Ym94Y25FWlJ3U1c2ZDNFN09SMUJ2SWRqS3NnXzE2NjcxOTM1MDQ6MTY2NzE5NzEwNF9WNA)
+![img](https://github.com/kingsoftcloud/cluster-autoscaler/blob/cluster-autoscaler-kce-1.20.3/images/kec.png)
 
 制作镜像的目的是为了让云主机自创建成功以后，就包含docker kubeadm等环境，省去了以上环境配置的步骤。后通过结合启动配置中的UserData（提供给实例启动时使用的用户自定义数据）一起使用，可以实现ca组件扩容的主机一经创建，就可以自动加入集群，打标签等功能。
 
