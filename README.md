@@ -1,4 +1,4 @@
-# 一、kubeadm集群构搭建
+# 一、kubeadm集群搭建
 
 ## 1.1 master节点搭建
 
