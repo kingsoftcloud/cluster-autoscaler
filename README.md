@@ -536,14 +536,14 @@ kubectl label node $HOSTNAME label=label1
             - operator: Exists
 ```
 
-在执行kubectl apply -f ca.yml之前，请根据您创建的ASG的ID等信息更新nodes参数
+在执行kubectl apply -f ca.yml之前，请根据您创建的ASG的ID、MinSize、MaxSize等信息更新nodes参数
 
 - 集群里只有1个ASG时：
 
 
-nodes=0:10:4343545432
+nodes=0:10:784216551637458944
 
-UserData设置为：
+启动配置的UserData内容示例：
 
 ```
 #!/bin/sh                                                                                 
@@ -557,18 +557,18 @@ source /etc/profile
 - 集群里有多个ASG时：
 
 
-nodes=0:10:4343545432
+nodes=0:10:784216551637458944
 
-nodes=0:10:4396783032
+nodes=0:10:439678303246567688
 
-UserData设置类似集群里只有1个ASG
+UserData内容类似集群里只有1个ASG时
 
 - 当ASG带有1个标签时：
 
 
-nodes=0:10:4343545432@label=value
+nodes=0:10:784216551637458944@label=value
 
-UserData设置为：
+UserData内容为：
 
 ```
 #!/bin/sh                                                                                 
@@ -583,9 +583,9 @@ kubectl label node $HOSTNAME label=value
 - 当ASG带有多个标签时，多个标签之间使用逗号分割：
 
 
-nodes=0:10:4343545432@label=value,label1=value1    
+nodes=0:10:784216551637458944@label=value,label1=value1    
 
-UserData设置为：
+UserData内容为：
 
 ```
 #!/bin/sh                                                                                 
