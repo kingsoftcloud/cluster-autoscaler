@@ -568,7 +568,7 @@ UserData内容类似集群里只有1个ASG时
 
 nodes=0:10:784216551637458944@label=value
 
-UserData内容为：
+UserData内容示例：
 
 ```
 #!/bin/sh                                                                                 
@@ -585,7 +585,7 @@ kubectl label node $HOSTNAME label=value
 
 nodes=0:10:784216551637458944@label=value,label1=value1    
 
-UserData内容为：
+UserData内容示例：
 
 ```
 #!/bin/sh                                                                                 
@@ -672,4 +672,4 @@ kubectl delete -f books.yml
 
 # 五、注意事项
 
-手动在AS控制台(而不是ca组件缩容)移除ASG里的node以后，该node会被ca组件标记为unready状态，因此手动在AS控制台移除ASG里的node以后，请在集群中执行kubectl delete node node-name删除该 node。通过kubectl get cm cluster-autoscaler-status -n kube-system -o yaml命令可以观测到被ca组件标记为unready的node的数量。unready的node数量超过ca组件设置的限制，ca组件将会停止工作。详见[How does CA deal with unready nodes?](https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md#how-does-ca-deal-with-unready-nodes)。
+手动在AS控制台(而不是ca组件缩容)移除ASG里的node以后，该node会被ca组件标记为unready状态，因此手动在AS控制台移除ASG里的node以后，请在集群中执行kubectl delete node node-name删除该 node。通过kubectl get cm cluster-autoscaler-status -n kube-system -o yaml命令可以观测到被ca组件标记为unready的node的数量。unready的node数量超过ca组件设置的限制，ca组件将会停止工作。详见[How does CA deal with unready nodes?](https://github.com/kingsoftcloud/cluster-autoscaler/blob/main/cluster-autoscaler/FAQ.md#how-does-ca-deal-with-unready-nodes)
