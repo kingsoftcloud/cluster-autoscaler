@@ -28,14 +28,14 @@ const (
 type autoScaling interface {
 	ModifyScalingGroup(input *kce_asg.SetDesiredCapacityInput, asg *kce_asg.KceAsg) ([]byte, error)
 	DescribeScalingInstance(id string) ([]byte, error)
-    CheckScaleDownProtections(nodes []*apiv1.Node) ([]byte, error)
-    ListInstancesByAsgs(asg *kce_asg.KceAsg) ([]byte, error)
-    FindTemplateByAsgs(asg * kce_asg.KceAsg) ([]byte, error)
-    ValidateAsgs(asg * kce_asg.KceAsg) ([]byte, error)
-    ListLabelsByAsgs(asg * kce_asg.KceAsg) ([]byte, error)
-    ListTaintsByAsgs(asg * kce_asg.KceAsg) ([]byte, error)
-    DetachInstancess(asg * kce_asg.KceAsg, instanceIDs []string) ([]byte, error)
-    CheckAutoScalerCanSells(asgs []* kce_asg.KceAsg) ([]byte, error)
+    	CheckScaleDownProtections(nodes []*apiv1.Node) ([]byte, error)
+    	ListInstancesByAsgs(asg *kce_asg.KceAsg) ([]byte, error)
+    	FindTemplateByAsgs(asg * kce_asg.KceAsg) ([]byte, error)
+   	ValidateAsgs(asg * kce_asg.KceAsg) ([]byte, error)
+    	ListLabelsByAsgs(asg * kce_asg.KceAsg) ([]byte, error)
+    	ListTaintsByAsgs(asg * kce_asg.KceAsg) ([]byte, error)
+    	DetachInstancess(asg * kce_asg.KceAsg, instanceIDs []string) ([]byte, error)
+    	CheckAutoScalerCanSells(asgs []* kce_asg.KceAsg) ([]byte, error)
 	SetDesiredCapacitys(input *kce_asg.SetDesiredCapacityInput, asg * kce_asg.KceAsg) ([]byte, error)
 }
 
@@ -119,22 +119,21 @@ type autoScalingWrapper struct {
 
 func newAutoScalingWrapper(cfg *config.CloudConfig,externalClient *kubernetes.Clientset) (*autoScalingWrapper, error) {
 	if cfg.IsValid() == false {
-		//Never reach here.
-		return nil, fmt.Errorf("your cloud config is not valid")
+	//Never reach here.
+	return nil, fmt.Errorf("your cloud config is not valid")
 	}
 	asw := &autoScalingWrapper{
 		cfg: cfg,
 	}
 	openApiClient, err := NewOpenApiClient()
 	if err != nil {
-		return nil, err
+	return nil, err
 	}
 	klog.V(0).Info("Kce OpenApi Client Complate")
 	asw.oclient= openApiClient
 	asw.externalClient= externalClient
 
 	if cfg.STSEnabled == true {
-		klog.V(0).Infof(" cfg.STSEnable == false")
 		go func(asw *autoScalingWrapper, cfg *config.CloudConfig) {
 			timer := time.NewTicker(refreshClientInterval)
 			defer timer.Stop()
