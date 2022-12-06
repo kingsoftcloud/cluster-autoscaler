@@ -40,7 +40,7 @@ func buildStaticallyDiscoveringProvider(kceManager *KceManager, specs []string, 
 	}
 	for _, spec := range specs {
 		if err := acp.addNodeGroup(spec); err != nil {
-			klog.Warningf("failed to add node group to alicloud provider with spec: %s", spec)
+			klog.Warningf("failed to add node group to kcecloud provider with spec: %s", spec)
 			return nil, err
 		}
 	}
@@ -104,13 +104,13 @@ func (kce *KceCloudProvider) addAsg(asg *KceNodeGroup) {
 
 func newKceCloudProvider(kceManager *KceManager,discoveryOpts cloudprovider.NodeGroupDiscoveryOptions, resourceLimiter *cloudprovider.ResourceLimiter) (cloudprovider.CloudProvider, error) {
 	if discoveryOpts.StaticDiscoverySpecified() {
-		return buildStaticallyDiscoveringProvider(kceManager, discoveryOpts.NodeGroupSpecs, resourceLimiter)//////////////////
+		return buildStaticallyDiscoveringProvider(kceManager, discoveryOpts.NodeGroupSpecs, resourceLimiter)
 	}
 	if discoveryOpts.AutoDiscoverySpecified() {
-		return nil, fmt.Errorf("only support static discovery scaling group in alicloud for now")
+		return nil, fmt.Errorf("only support static discovery scaling group in kcecloud for now")
 	}
 
-	return nil, fmt.Errorf("failed to build alicloud provider: node group specs must be specified")
+	return nil, fmt.Errorf("failed to build kcecloud provider: node group specs must be specified")
 }
 
 // BuildKceCloud returns new KceCloudProvider
