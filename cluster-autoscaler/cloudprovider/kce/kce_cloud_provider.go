@@ -104,7 +104,7 @@ func (kce *KceCloudProvider) addAsg(asg *KceNodeGroup) {
 
 func newKceCloudProvider(kceManager *KceManager,discoveryOpts cloudprovider.NodeGroupDiscoveryOptions, resourceLimiter *cloudprovider.ResourceLimiter) (cloudprovider.CloudProvider, error) {
 	if discoveryOpts.StaticDiscoverySpecified() {
-		return buildStaticallyDiscoveringProvider(kceManager, discoveryOpts.NodeGroupSpecs, resourceLimiter)//////////////////
+		return buildStaticallyDiscoveringProvider(kceManager, discoveryOpts.NodeGroupSpecs, resourceLimiter)
 	}
 	if discoveryOpts.AutoDiscoverySpecified() {
 		return nil, fmt.Errorf("only support static discovery scaling group in kcecloud for now")
