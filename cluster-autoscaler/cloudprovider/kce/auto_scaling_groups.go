@@ -119,6 +119,7 @@ func (ng *KceNodeGroup) IncreaseSize(delta int) error {
 // should wait until node group size is updated. Implementation required.
 func (ng *KceNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 	refs := make([]string, 0)
+	hostNames := make([]string, 0)
 	for _, node := range nodes {
 		instances, err := ng.kceManager.GetKceNodes(ng.Asg)//[InstancesSet]
 		if err != nil {
@@ -129,6 +130,7 @@ func (ng *KceNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 			if node.Name == instance.HostnameOverride {
 				flag = true
 				refs = append(refs, instance.ID)
+				hostNames = append(hostNames, node.Name)
 				break
 			}
 		}
@@ -137,7 +139,8 @@ func (ng *KceNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 		}
 	}
 	klog.Infof("Start to delete instances: %v", refs)
-	return ng.kceManager.DeleteInstances(ng.Asg, refs)
+	klog.Infof("Start to delete instances host: %v", hostNames)
+	return ng.kceManager.DeleteInstances(ng.Asg, refs, hostNames)
 }
 
 // DecreaseTargetSize decreases the target size of the node group. This function
