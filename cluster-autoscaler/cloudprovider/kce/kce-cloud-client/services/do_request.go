@@ -33,7 +33,8 @@ func buildOpenApiRequestWithBodyReader(serviceName, region, securityToken string
 	}
 	var endpoint string
 	if os.Getenv("endpoint") == "" {
-		endpoint = "https://kce.api.ksyun.com/?"
+		//endpoint = "https://kce.api.ksyun.com/?"
+		endpoint = "http://"+serviceName+"."+region+".api.ksyun.com/?"
 	} else {
 		endpoint = os.Getenv("endpoint")
 	}
