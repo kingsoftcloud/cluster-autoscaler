@@ -1,7 +1,7 @@
 package kce
 
 import (
-	//"context"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
@@ -10,14 +10,14 @@ import (
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/kce/config"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/kce/kce-asg"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/kce/kce-cloud-client/services"
-	//"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/clientcmd"
 	//"os"
 	"strings"
 	"time"
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/klog/v2"
-	//kubeclient "k8s.io/client-go/kubernetes"
+	kubeclient "k8s.io/client-go/kubernetes"
 )
 const (
 	AppengineInstanceUUIDKey = "appengine.sdns.ksyun.com/instance-uuid"
@@ -423,7 +423,7 @@ func (a *autoScalingWrapper) FindTaintsByAsg(asg * kce_asg.KceAsg) []*autoscalin
 	return nil
 }
 
-func (a *autoScalingWrapper) DetachInstances(asg * kce_asg.KceAsg, instanceName []string) error {
+func (a *autoScalingWrapper) DetachInstances(asg * kce_asg.KceAsg, instanceName []string, hostNames []string) error {
 	DeleteInstances :=  []string{}
 	InstancesSets :=  []*InstancesSet{}
 	vms, err := a.ListInstancesByAsgs(asg)
@@ -453,5 +453,18 @@ func (a *autoScalingWrapper) DetachInstances(asg * kce_asg.KceAsg, instanceName 
 		klog.V(3).Infof("kce CA list instances by kcgName: %s failed ,because: %v", asg.Name, err)
 	}
 	_, err = a.DetachInstancess(asg, DeleteInstances)
+	if err ==nil {
+		kubeconfigPath := os.Getenv("KUBECONFIG")
+		externalConfig, _ := clientcmd.BuildConfigFromFlags("", kubeconfigPath)
+		externalClient := kubeclient.NewForConfigOrDie(externalConfig)
+		//for _, Instance := range InstancesSets {
+		for _, Hostname := range hostNames {
+			err:= externalClient.CoreV1().Nodes().Delete(context.TODO(),Hostname, metav1.DeleteOptions{})
+			if(err!=nil){
+				klog.Errorf("delete node from cluster: %v", err)
+				return err
+			}
+		}
+	}
 	return err
 }
