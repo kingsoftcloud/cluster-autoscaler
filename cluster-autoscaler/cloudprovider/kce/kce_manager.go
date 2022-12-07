@@ -117,12 +117,12 @@ func (m *KceManager) GetAsgTargetSize(asg *kce_asg.KceAsg) (int, error) {
 }
 
 // DeleteInstances detach nodes.
-func (m *KceManager) DeleteInstances(asg *kce_asg.KceAsg, instanceIDs []string) error {
+func (m *KceManager) DeleteInstances(asg *kce_asg.KceAsg, instanceIDs []string, hostNames []string) error {
 	if len(instanceIDs) == 0 {
 		return nil
 	}
 
-	return m.service.DetachInstances(asg, instanceIDs)
+	return m.service.DetachInstances(asg, instanceIDs, hostNames)
 }
 
 func (m *KceManager) getKceTemplate(asg *kce_asg.KceAsg) (*KceTemplate, error) {
