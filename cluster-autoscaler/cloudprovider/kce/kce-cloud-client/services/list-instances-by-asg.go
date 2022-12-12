@@ -18,6 +18,10 @@ func (client *Client) ListInstancesByAsg(asg *kce_asg.KceAsg) ([]byte, error) {
 func (client *Client) DescribeScalingInstance(InstanceIds []string,projectIds []int64) ([]byte, error) {
 	//query := "Action=DescribeInstances&Version=" + openApiVersion2016 + "&InstanceId.1=" + id
 	query := "Action=DescribeInstances&Version=" + openApiVersion2016
+	if len(InstanceIds)==0{
+		klog.V(5).Infof("Please check the instanceId",InstanceIds)
+		return nil,nil
+	}
 	for index, id := range InstanceIds {
 		query = query + fmt.Sprintf("&InstanceId.%d=%d", index+1, id)
 	}

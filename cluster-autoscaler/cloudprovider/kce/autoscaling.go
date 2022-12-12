@@ -288,8 +288,8 @@ func (a *autoScalingWrapper) getProjectIdByAsgId(asg * kce_asg.KceAsg) (projectI
 	return nil, err
 }
 
-func  (a *autoScalingWrapper)  GetHostNameById (id []string,asg * kce_asg.KceAsg)([]string,error){
-	data, err :=a.DescribeScalingInstance(id,[]int64{asg.ProjectId})
+func  (a *autoScalingWrapper)  GetHostNameById (ids []string,asg * kce_asg.KceAsg)([]string,error){
+	data, err :=a.DescribeScalingInstance(ids,[]int64{asg.ProjectId})
 	if(err != nil) {
 		klog.Errorf("Invalid ASG %s, error: %v", err)
 	}
@@ -318,7 +318,7 @@ func (a *autoScalingWrapper) InstancesByAsg(asg * kce_asg.KceAsg) (*InstanceList
 		if len(instances.Instances) > 0 {
 			var allInstances []*InstancesSet
 			var instancesIds []string
-			//获取所有的instanceID
+			//获取所有的ASG下的instanceID
 			for _, instance := range instances.Instances {
 				instancesIds = append(instancesIds,instance.ID)
 			}
@@ -461,31 +461,71 @@ func (a *autoScalingWrapper) FindTaintsByAsg(asg * kce_asg.KceAsg) []*autoscalin
 	return nil
 }
 
-func (a *autoScalingWrapper) DetachInstances(asg *kce_asg.KceAsg, instanceIds []string, hostNames []string) error {
-	var DeleteInstancesIds []string
-	//vms, err := a.ListInstancesByAsg(asg)
-	vms, err := a.DescribeScalingInstance(instanceIds,[]int64{asg.ProjectId})
+//func (a *autoScalingWrapper) DetachInstances(asg *kce_asg.KceAsg, instanceIds []string, hostNames []string) error {
+//	var DeleteInstancesIds []string
+//	//vms, err := a.ListInstancesByAsg(asg)
+//	vms, err := a.DescribeScalingInstance(instanceIds,[]int64{asg.ProjectId})
+//	if err == nil {
+//		var instances InstanceList
+//		err = json.Unmarshal(vms, &instances)
+//		if err != nil {
+//			return err
+//		}
+//		if len(instances.Instances) > 0 {
+//			for _, instance := range instances.Instances {
+//				if instance.ProtectedFromScaleIn == 0{
+//					DeleteInstancesIds = append(DeleteInstancesIds,instance.ID)
+//				}
+//			}
+//		}
+//		if len(instances.Instances) <= 0 {
+//			return fmt.Errorf("Invalide instanceId. ")
+//		}
+//	}else{
+//		klog.V(3).Infof("Describe instances by ASGName: %s failed ,because: %v", asg.Name, err)
+//		return  err
+//	}
+//	_, err = a.DetachInstancesById(asg, DeleteInstancesIds)
+//	if err == nil {
+//		for _, hostName := range hostNames {
+//			err := a.externalClient.CoreV1().Nodes().Delete(context.TODO(),hostName, metav1.DeleteOptions{})
+//			if(err != nil){
+//				klog.Errorf("Delete node %s from cluster error: %v", hostName, err)
+//				return err
+//			}
+//		}
+//	}
+//	return err
+//}
+
+func (a *autoScalingWrapper) DetachInstances(asg * kce_asg.KceAsg, instanceName []string, hostNames []string) error {
+	var DeleteInstances []string
+	vms, err := a.ListInstancesByAsg(asg)
 	if err == nil {
 		var instances InstanceList
 		err = json.Unmarshal(vms, &instances)
 		if err != nil {
 			return err
 		}
+		count := instances.DesiredCapacity
+		set := make(map[string]*InstancesSet, count)
 		if len(instances.Instances) > 0 {
 			for _, instance := range instances.Instances {
-				if instance.ProtectedFromScaleIn == 0{
-					DeleteInstancesIds = append(DeleteInstancesIds,instance.ID)
+				if instance.ProtectedFromScaleIn==0{
+					set[instance.ID] = instance
 				}
 			}
 		}
-		if len(instances.Instances) <= 0 {
-			return fmt.Errorf("Invalide instanceId. ")
+		for _,ins := range instanceName{
+			_, ok := set[ins]
+			if ok{
+				DeleteInstances = append(DeleteInstances,ins)
+			}
 		}
 	}else{
-		klog.V(3).Infof("Describe instances by ASGName: %s failed ,because: %v", asg.Name, err)
-		return  err
+		klog.V(3).Infof("KCE CA list instances by ASGName: %s failed ,because: %v", asg.Name, err)
 	}
-	_, err = a.DetachInstancesById(asg, DeleteInstancesIds)
+	_, err = a.DetachInstancesById(asg, DeleteInstances)
 	if err == nil {
 		for _, hostName := range hostNames {
 			err := a.externalClient.CoreV1().Nodes().Delete(context.TODO(),hostName, metav1.DeleteOptions{})
