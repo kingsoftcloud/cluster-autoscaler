@@ -52,11 +52,11 @@ func (config *CloudConfig) IsValid() bool {
 	}
 
 	if config.AccessKeySecret == "" {
-		config.AccessKeyID = config.GetFromEnv(accessKeySecret)
+		config.AccessKeySecret = config.GetFromEnv(accessKeySecret)
 	}
 
 	if config.RegionId == "" {
-		config.AccessKeyID = config.GetFromEnv(regionId)
+		config.RegionId = config.GetFromEnv(regionId)
 	}
 
 	if config.AccessKeyID == "" || config.AccessKeySecret == "" {
