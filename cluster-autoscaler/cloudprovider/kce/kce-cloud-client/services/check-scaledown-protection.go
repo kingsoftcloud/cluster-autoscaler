@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-func (client *Client) CheckScaleDownProtections(nodes []*apiv1.Node) ([]byte, error) {
+func (client *Client) CheckScaleDownProtection(nodes []*apiv1.Node) ([]byte, error) {
 	var kecInstances []string
 	var queryParam strings.Builder
 	//kubeadm注释内容
 	for _, node := range nodes {
 		//kubeadm集群没有"appengine.sdns.ksyun.com/instance-uuid"，改为使用SystemUUID
 		SystemUUID:=node.Status.NodeInfo.SystemUUID
-		klog.V(0).Infof("get nodeinstanceuuid by node.Status.NodeInfo.SystemUUID : %s", SystemUUID)
+		klog.V(0).Infof("Get nodeinstanceuuid by node.Status.NodeInfo.SystemUUID : %s", SystemUUID)
 		if SystemUUID!="" {
 			kecInstances = append(kecInstances, SystemUUID)
 		} else {

@@ -6,7 +6,7 @@ import (
 	"net/url"
 )
 
-func (client *Client) CheckAutoScalerCanSells(asgs []*kce_asg.KceAsg) ([]byte, error) {
+func (client *Client) CheckAutoScalerCanSell(asgs []*kce_asg.KceAsg) ([]byte, error) {
 	//params := url.Values{}
 	//params.Add("Action", "CheckAutoScalerCanSell")
 	//params.Add("Version", openApiVersion)

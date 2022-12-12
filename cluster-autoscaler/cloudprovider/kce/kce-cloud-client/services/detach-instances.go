@@ -6,7 +6,7 @@ import (
 	"k8s.io/klog/v2"
 )
 
-func (client *Client) DetachInstancess(asg *kce_asg.KceAsg, instanceIDs []string) ([]byte, error) {
+func (client *Client) DetachInstancesById(asg *kce_asg.KceAsg, instanceIDs []string) ([]byte, error) {
 	query := fmt.Sprintf("Action=DetachInstance&Version=%s&ScalingGroupId=%s", "2016-03-04", client.AutoScalerGroupId(asg))
 	for index, id := range instanceIDs {
 		query = query + fmt.Sprintf("&ScalingInstanceId.%d=%s", index+1, id)

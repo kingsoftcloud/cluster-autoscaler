@@ -13,6 +13,7 @@ type KceAsg struct {
 	MinSize       int      `json:"min_size"`
 	MaxSize       int      `json:"max_size"`
 	AvailableZone []string `json:"available_zones"`
+	ProjectId     int64    `json:"projectId"`
 }
 
 func GetNodeGroupNameAndZone(asg *KceAsg) (string, string) {

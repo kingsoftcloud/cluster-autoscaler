@@ -40,7 +40,7 @@ func buildStaticallyDiscoveringProvider(kceManager *KceManager, specs []string, 
 	}
 	for _, spec := range specs {
 		if err := acp.addNodeGroup(spec); err != nil {
-			klog.Warningf("failed to add node group to kcecloud provider with spec: %s", spec)
+			klog.Warningf("Failed to add node group to KCE cloud provider with spec: %s", spec)
 			return nil, err
 		}
 	}
@@ -52,49 +52,53 @@ func buildStaticallyDiscoveringProvider(kceManager *KceManager, specs []string, 
 func (kce *KceCloudProvider) addNodeGroup(spec string) error {
 	NodeGroup, err := buildAsgFromSpec(spec, kce.kceManager)
 	if err != nil {
-		klog.Errorf("failed to build ASG from spec,because of %s", err.Error())
+		klog.Errorf("Failed to build ASG from spec,because of %s", err.Error())
 		return err
 	}
 	kce.Asgs = append(kce.Asgs, NodeGroup)
-	virtualGroup := &kce_asg.KceAsg{}
-	err = DeepCopy(virtualGroup, NodeGroup.Asg)
-	if err != nil {
-		klog.Errorf("Make virtual kce asg error: %v", err)
-	}
-
 	return nil
 }
 
 func buildAsgFromSpec(value string, manager *KceManager) (*KceNodeGroup, error) {
 	spec, err := dynamic.SpecFromString(value, true)
-		klog.V(0).Infof("asg spec",spec)
+		klog.V(0).Infof("ASG spec information",spec)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse node group spec: %v", err)
+		return nil, fmt.Errorf("Failed to parse node group spec: %v. ", err)
 	}
-	_, err = manager.service.ValidateAsgs(&kce_asg.KceAsg{Name: spec.Name})
+	_, err = manager.service.ValidateAsg(&kce_asg.KceAsg{Name: spec.Name})
 	if err != nil {
-		klog.Errorf("your scaling group: %s does not exist", spec.Name)
+		klog.Errorf("Your scaling group %s does not exist", spec.Name)
 		return nil, err
 	}
-	KceNodeGroup := buildAsg(manager, spec.MinSize, spec.MaxSize, spec.Name, manager.cfg.GetRegion())
 
-	return KceNodeGroup, nil
+	KceNodeGroup,buildError := buildAsg(manager, spec.MinSize, spec.MaxSize, spec.Name, manager.cfg.RegionId)
+	if buildError != nil {
+		return KceNodeGroup, nil
+	}
+	return nil, err
 }
 
-func buildAsg(manager *KceManager, minSize int, maxSize int, id string, regionId string) *KceNodeGroup {
+func buildAsg(manager *KceManager, minSize int, maxSize int, id string, regionId string) (*KceNodeGroup , error){
 	AsgBuild := &kce_asg.KceAsg{
 		MinSize:  minSize,
 		MaxSize:  maxSize,
 		Name:       id,
 		//regionId: regionId,
 	}
-
+	//获取ASG的ProjectId
+	projectIds, err := manager.service.getProjectIdByAsgId(AsgBuild)
+	if(err != nil) {
+		klog.Errorf("Get ASG %s projectIds error: %v.", AsgBuild.Name, err)
+		return nil,err
+	}
+	klog.V(3).Infof("KCE ASG %s projectId is %d.", AsgBuild.Name, projectIds)
+	AsgBuild.ProjectId = projectIds[0]
 	KceNodeGroup := &KceNodeGroup{
 		kceManager: manager,
 		Asg: AsgBuild,
 	}
-	return KceNodeGroup
+	return KceNodeGroup,nil
 }
 
 // add and register an asg to this cloud provider
@@ -107,10 +111,10 @@ func newKceCloudProvider(kceManager *KceManager,discoveryOpts cloudprovider.Node
 		return buildStaticallyDiscoveringProvider(kceManager, discoveryOpts.NodeGroupSpecs, resourceLimiter)
 	}
 	if discoveryOpts.AutoDiscoverySpecified() {
-		return nil, fmt.Errorf("only support static discovery scaling group in kcecloud for now")
+		return nil, fmt.Errorf("Only support static discovery scaling group in KCE cloud now. ")
 	}
 
-	return nil, fmt.Errorf("failed to build kcecloud provider: node group specs must be specified")
+	return nil, fmt.Errorf("Failed to build KCE cloud provider: node group specs must be specified. ")
 }
 
 // BuildKceCloud returns new KceCloudProvider
@@ -119,7 +123,7 @@ func BuildKceCloud(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDis
 	var kce_err error
 	externalConfig, err := buildClusterConfig()
 	if err != nil {
-		klog.Fatalf("Failed to get kubeclient config for external cluster: %v", err)
+		klog.Fatalf("Failed to get config for external cluster: %v", err)
 	}
 	externalClient := kubeclient.NewForConfigOrDie(externalConfig)
 	if opts.CloudConfig != "" {
@@ -130,21 +134,21 @@ func BuildKceCloud(opts config.AutoscalingOptions, do cloudprovider.NodeGroupDis
 		defer config.Close()
 		kceManager, kce_err = CreateKceManager(config,do, externalClient)
 	} else {
-		klog.V(0).Infof("opts.CloudConfig is null")
+		klog.V(0).Infof("Cloud config is null.")
 		kceManager, kce_err = CreateKceManager(nil,do, externalClient)
 	}
 	if kce_err != nil {
-		klog.Fatalf("Failed to create kce Manager: %v", err)
+		klog.Fatalf("Failed to create KCE Manager: %v", err)
 	}
-	klog.V(3).Info("Creating KCE Manager Complate")
+	klog.V(3).Info("Creating KCE Manager Complete.")
 
 	provider, err := newKceCloudProvider(kceManager,do, rl)
 
 	if err != nil {
-		klog.Fatalf("Failed to create Kce cloud provider: %v", err)
+		klog.Fatalf("Failed to create KCE cloud provider: %v.", err)
 	}
-	klog.V(3).Infof("Kce Recourse Limiter: %v ", rl)
-	klog.V(3).Info("Creating KCE cloud Complete")
+	klog.V(3).Infof("KCE Recourse Limiter: %v .", rl)
+	klog.V(3).Info("Creating KCE Cloud Complete.")
 
 	return provider
 }

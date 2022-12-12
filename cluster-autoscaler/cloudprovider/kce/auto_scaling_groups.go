@@ -39,13 +39,13 @@ type InstancesSet2018 struct {
 	IP                     string `json:"PrivateIpAddress"` // deprecated , use `HostnameOverride` instead
 	ID                     string `json:"InstanceId"`
 	AvailableZone          string `json:"AvailabilityZone"`
-	//HostnameOverride       string `json:"HostnameOverride"`
+	//HostnameOverride     string `json:"HostnameOverride"`
 	HostnameOverride       string `json:"Hostname"`
 	ProtectedFromScaleDown bool   `json:"ProtectedFromScaleDown"`
 }
 
 type InstanceList struct {
-	DesiredCapacity int          `json:"DesiredCapacity"`
+	DesiredCapacity int             `json:"DesiredCapacity"`
 	RequestId       string          `json:"RequestId"`
 	Instances       []*InstancesSet `json:"ScalingInstanceSet"`
 }
@@ -60,7 +60,6 @@ type InstancesSet struct{
 	ProtectedFromScaleIn   int   `json:"ProtectedFromScaleIn"`
 	ProtectedFromScaleDown bool   `json:"ProtectedFromScaleDown"`
 }
-
 
 func (ng *KceNodeGroup) WholeAvailabilityZones() []string {
 	return ng.Asg.AvailableZone
@@ -90,16 +89,16 @@ func (ng *KceNodeGroup) Create() (cloudprovider.NodeGroup, error) {
 func (ng *KceNodeGroup) TargetSize() (int, error) {
 	size, err := ng.kceManager.GetAsgTargetSize(ng.Asg)
 	if err != nil {
-		klog.V(0).Infof("kce node group get target size error: %v", err)
+		klog.V(0).Infof("Kce node group get target size error: %v", err)
 		return 0, err
 	}
-	klog.V(0).Infof("kce node group %s get target size : %d", ng.Asg.Name, size)
+	klog.V(0).Infof("Kce node group %s get target size : %d", ng.Asg.Name, size)
 	return int(size), nil
 }
 
 // IncreaseSize increases Asg size
 func (ng *KceNodeGroup) IncreaseSize(delta int) error {
-	klog.V(0).Infof("kce node group scale up node size : %d", delta)
+	klog.V(0).Infof("Kce node group scale up node size : %d", delta)
 	if delta <= 0 {
 		return fmt.Errorf("kce node group scale up node size <= 0")
 	}
@@ -107,7 +106,7 @@ func (ng *KceNodeGroup) IncreaseSize(delta int) error {
 	if err != nil {
 		return fmt.Errorf("get kce node group %s target size error : %v", ng.Asg.Name, err)
 	}
-	klog.V(0).Infof("kce node group %s current node size : %d", ng.Asg.Name, size)
+	klog.V(0).Infof("Kce node group %s current node size : %d", ng.Asg.Name, size)
 	if size+delta > ng.Asg.MaxSize {
 		return fmt.Errorf("kce node group size increase too large - desired:%d max:%d", size+delta, ng.Asg.MaxSize)
 	}
@@ -121,7 +120,7 @@ func (ng *KceNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 	refs := make([]string, 0)
 	hostNames := make([]string, 0)
 	for _, node := range nodes {
-		instances, err := ng.kceManager.GetKceNodes(ng.Asg)//[InstancesSet]
+		instances, err := ng.kceManager.GetKceNodes(ng.Asg)
 		if err != nil {
 			return err
 		}
@@ -138,8 +137,8 @@ func (ng *KceNodeGroup) DeleteNodes(nodes []*apiv1.Node) error {
 			return fmt.Errorf("%s belongs to a different Asg than %s", node.Name, ng.Asg.Name)
 		}
 	}
-	klog.Infof("Start to delete instances: %v", refs)
-	klog.Infof("Start to delete instances host: %v", hostNames)
+	klog.Infof("Start to delete instances Id: %v", refs)
+	klog.Infof("Start to delete instances hostNames: %v", hostNames)
 	return ng.kceManager.DeleteInstances(ng.Asg, refs, hostNames)
 }
 

@@ -2,7 +2,7 @@ package services
 
 import "k8s.io/autoscaler/cluster-autoscaler/cloudprovider/kce/kce-asg"
 
-func (client *Client) ListLabelsByAsgs(asg *kce_asg.KceAsg) ([]byte, error) {
+func (client *Client) ListLabelsByAsg(asg *kce_asg.KceAsg) ([]byte, error) {
 	query := "Action=DescribeAutoScalerLabel&Version=" + openApiVersion + "&AutoScalerGroupId=" + client.AutoScalerGroupId(asg)
 	return DoRequest(client, query, "")
 }

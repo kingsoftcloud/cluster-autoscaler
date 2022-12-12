@@ -36,29 +36,27 @@ type CloudConfig struct {
 	SecurityToken   string
 }
 
+func (config *CloudConfig) GetFromEnv(key string) string {
+	val,ok := os.LookupEnv(key)
+	if !ok || val == ""{
+		return ""
+	}
+	klog.V(3).Infof("get value from env,key:%s,value:%s",key,val)
+	val = strings.Replace(val, "\\n", "", -1)
+	return strings.Replace(val, "\n", "", -1)
+}
+
 func (config *CloudConfig) IsValid() bool {
 	if config.AccessKeyID == "" {
-		klog.V(3).Infof("os.Getenv(accessKeyId)", os.Getenv(accessKeyId))
-		var str = strings.Replace(os.Getenv(accessKeyId), "\\n", "", -1)
-		str = strings.Replace(str, "\n", "", -1)
-		config.AccessKeyID = str
-		klog.V(3).Infof("config.AccessKeyID", config.AccessKeyID)
+		config.AccessKeyID = config.GetFromEnv(accessKeyId)
 	}
 
 	if config.AccessKeySecret == "" {
-		klog.V(3).Infof("os.Getenv(accessKeySecret)", os.Getenv(accessKeySecret))
-		var str = strings.Replace(os.Getenv(accessKeySecret), "\\n", "", -1)
-		str = strings.Replace(str, "\n", "", -1)
-		config.AccessKeySecret = str
-		klog.V(3).Infof("config.AccessKeySecret", config.AccessKeySecret)
+		config.AccessKeyID = config.GetFromEnv(accessKeySecret)
 	}
 
 	if config.RegionId == "" {
-		klog.V(3).Infof("os.Getenv(regionId)", os.Getenv(regionId))
-		var str = strings.Replace(os.Getenv(regionId), "\\n", "", -1)
-		str = strings.Replace(str, "\n", "", -1)
-		config.RegionId = str
-		klog.V(3).Infof("config.RegionId ", config.RegionId )
+		config.AccessKeyID = config.GetFromEnv(regionId)
 	}
 
 	if config.AccessKeyID == "" || config.AccessKeySecret == "" {
@@ -67,12 +65,4 @@ func (config *CloudConfig) IsValid() bool {
 	}
 
 	return true
-}
-
-func (config *CloudConfig) GetRegion() string {
-	if config.RegionId != "" {
-		return config.RegionId
-	}
-
-	return ""
 }

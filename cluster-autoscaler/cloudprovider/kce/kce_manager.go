@@ -81,7 +81,7 @@ type KceInstance struct {
 }
 
 func (m *KceManager) ValidateASG(asg *kce_asg.KceAsg) bool {
-	return m.service.ValidateAsg(asg)
+	return m.service.ValidateAsgById(asg)
 }
 
 // SetAsgSize sets ASG size.
@@ -90,7 +90,7 @@ func (m *KceManager) SetKcgSize(kcg *KceNodeGroup, size int) error {
 		AutoScalingGroupName: String(kcg.Asg.Name),
 		DesiredCapacity:      String(strconv.Itoa(size)),
 	}
-	klog.V(0).Infof("kce CA setting Asg %s size to %d", kcg.Asg.Name, size)
+	klog.V(0).Infof("KCE CA setting Asg %s size to %d", kcg.Asg.Name, size)
 	_, err := m.service.SetDesiredCapacity(params, kcg.Asg)
 	if err != nil {
 		return err
@@ -126,7 +126,7 @@ func (m *KceManager) DeleteInstances(asg *kce_asg.KceAsg, instanceIDs []string, 
 }
 
 func (m *KceManager) getKceTemplate(asg *kce_asg.KceAsg) (*KceTemplate, error) {
-	klog.V(0).Infof("kce manager get template by asg name : %s", asg.Name)
+	klog.V(0).Infof("KCE manager get template by ASG name : %s", asg.Name)
 	template, err := m.service.GetInstanceTemplate(asg)
 	if err != nil {
 		return nil, err
@@ -163,10 +163,10 @@ func (m *KceManager) buildNodeFromTemplate(asg *kce_asg.KceAsg, template *KceTem
 	node.Status.Capacity[gpu.ResourceNvidiaGPU] = *resource.NewQuantity(template.InstanceType.GPU, resource.DecimalSI)
 	node.Status.Capacity[apiv1.ResourceMemory] = *resource.NewQuantity(template.InstanceType.MemoryMb*1024*1024, resource.DecimalSI)
 	configmap, err := m.externalClient.CoreV1().ConfigMaps(DefaultNamespace).Get(context.TODO(),DefaultEniPluginCMName, metav1.GetOptions{})
-	klog.V(0).Infof("configmap kce-eni-plugin-cm", configmap.Kind, configmap.APIVersion,configmap.Data)
+	klog.V(0).Infof("Get configmap kind %s apiVersion %s and data %s", configmap.Kind, configmap.APIVersion,configmap.Data)
 	if err != nil {
 		if !errors.IsNotFound(err) {
-			klog.Errorf("get configmap %s/%s error: %v", DefaultNamespace, DefaultEniPluginCMName, err)
+			klog.Errorf("Get configmap %s/%s error: %v", DefaultNamespace, DefaultEniPluginCMName, err)
 		}
 	} else {
 		masterRoleCpuStr, ok := configmap.Data[DefaultMasterMinCPU]
@@ -177,7 +177,7 @@ func (m *KceManager) buildNodeFromTemplate(asg *kce_asg.KceAsg, template *KceTem
 					if value, ok := configmap.Data[DefaultEniNumKey]; ok {
 						defaultEni, err := strconv.Atoi(value)
 						if err == nil {
-							klog.Infof("asg %s set capacity, key:%s, value:%v", asg.Name, KsyunEni, int64(defaultEni))
+							klog.Infof("ASG %s set capacity, key:%s, value:%v", asg.Name, KsyunEni, int64(defaultEni))
 							node.Status.Capacity[KsyunEni] = *resource.NewQuantity(int64(defaultEni), resource.DecimalSI)
 						}
 					}
@@ -185,7 +185,7 @@ func (m *KceManager) buildNodeFromTemplate(asg *kce_asg.KceAsg, template *KceTem
 					if value, ok := configmap.Data[DefaultEtcdNumKey]; ok {
 						defaultEtcd, err := strconv.Atoi(value)
 						if err == nil {
-							klog.Infof("asg %s set capacity, key:%s, value:%v", asg.Name, KsyunEtcd, int64(defaultEtcd))
+							klog.Infof("ASG %s set capacity, key:%s, value:%v", asg.Name, KsyunEtcd, int64(defaultEtcd))
 							node.Status.Capacity[KsyunEtcd] = *resource.NewQuantity(int64(defaultEtcd), resource.DecimalSI)
 						}
 					}
@@ -202,12 +202,12 @@ func (m *KceManager) buildNodeFromTemplate(asg *kce_asg.KceAsg, template *KceTem
 
 	// NodeLabels
 	if template.Labels != nil {
-		klog.V(0).Infof("Set asg %s template labels %v", asg.Name, template.Labels)
+		klog.V(0).Infof("Set ASG %s template labels %v", asg.Name, template.Labels)
 		node.Labels = cloudprovider.JoinStringMaps(node.Labels, template.Labels)
 	}
 
 	if template.Tags != nil {
-		klog.V(0).Infof("Set asg %s template taints %v", asg.Name, template.Tags)
+		klog.V(0).Infof("Set ASG %s template taints %v", asg.Name, template.Tags)
 		node.Spec.Taints = extractTaintsFromAsg(template.Tags)
 	}
 
@@ -245,7 +245,7 @@ func extractTaintsFromAsg(tags []*autoscaling.TagDescription) []apiv1.Taint {
 				})
 			}
 		} else {
-			klog.V(3).Info("extractTaintsFromAsg: invalid taints %s=%s", k, v)
+			klog.V(3).Info("ExtractTaintsFromAsg: invalid taints %s=%s", k, v)
 		}
 	}
 	return taints
@@ -286,21 +286,20 @@ func CreateKceManager(configReader io.Reader, discoveryOpts cloudprovider.NodeGr
 	var err error
 	if configReader != nil {
 		if err := gcfg.ReadInto(cfg, configReader); err != nil {
-			klog.Errorf("couldn't read config: %v", err)
+			klog.Errorf("Couldn't read config: %v", err)
 			return nil, err
 		}
 	}
 	if cfg.IsValid() == false {
-		klog.Errorf("please check whether you have \" +\"provided correct AccessKeyId,AccessKeySecret,RegionId or STS Token")
+		klog.Errorf("Please check whether you have \" +\"provided correct AccessKeyId,AccessKeySecret,RegionId or STS Token")
 		//return nil, "please check whether you have " +"provided correct AccessKeyId,AccessKeySecret,RegionId or STS Token"
 		return nil, err
 	}
 	asw, err := newAutoScalingWrapper(cfg,externalClient)// newwrapper
 	if err != nil {
-		klog.Errorf("failed to create NewAutoScalingWrapper because of %s", err)
+		klog.Errorf("Failed to create NewAutoScalingWrapper because of %s", err)
 		return nil, err
 	}
-	klog.V(0).Info("kce Manager Service Complate")
 	manager := &KceManager{
 		service:        asw,
 		//spec:           discoveryOpts,
@@ -310,11 +309,8 @@ func CreateKceManager(configReader io.Reader, discoveryOpts cloudprovider.NodeGr
 		cache:          cache.New(CacheExpirationSec*time.Second, CacheCleanUpInterval*time.Second),
 	}
 	if discoveryOpts.StaticDiscoverySpecified() {
-		//len(o.NodeGroupSpecs) > 0
 		manager.spec = discoveryOpts
-		klog.V(0).Info("NodeGroupSpecs",discoveryOpts.NodeGroupSpecs)
 	}
-	klog.V(0).Info("kce Manager Complate")
 	return manager, nil
 }
 
@@ -326,7 +322,7 @@ func syncNodeGroupsFromCM(manager *KceManager) {
 			manager.spec.NodeGroupSpecs = make([]string, 0)
 			manager.specLock.Unlock()
 		}
-		klog.Warningf("get configmap %s/%s error: %v", DefaultNamespace, DefaultScaleUpCMName, err)
+		klog.Warningf("Get configmap %s/%s error: %v", DefaultNamespace, DefaultScaleUpCMName, err)
 	} else {
 		if nodesJsonStr, ok := conf.Data["group"]; ok {
 			if len(nodesJsonStr) != 0 {
@@ -335,7 +331,7 @@ func syncNodeGroupsFromCM(manager *KceManager) {
 					manager.specLock.Lock()
 					manager.spec.NodeGroupSpecs = nodeGroupSpecs
 					manager.specLock.Unlock()
-					klog.Infof("get NodeGroups form %s/%s, NodeGroups: %v", DefaultNamespace, DefaultScaleUpCMName, nodeGroupSpecs)
+					klog.Infof("Get NodeGroups form %s/%s, NodeGroups: %v", DefaultNamespace, DefaultScaleUpCMName, nodeGroupSpecs)
 				}
 			}
 		}
@@ -353,7 +349,7 @@ func convertToNodeGroupSpecs(nodesJsonStr string) ([]string, error) {
 	for _, nodeGroup := range jsonArrayObject.Nodes {
 		nodeGroupStr, err := json.Marshal(nodeGroup)
 		if err != nil {
-			klog.Errorf("convert node info error: %v", err)
+			klog.Errorf("Convert node info error: %v", err)
 			return nil, err
 		}
 		nodeGroupSpecs = append(nodeGroupSpecs, string(nodeGroupStr))

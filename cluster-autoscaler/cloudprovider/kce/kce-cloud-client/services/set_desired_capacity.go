@@ -27,7 +27,7 @@ func (client *Client) AutoScalerGroupZone(asg *kce_asg.KceAsg) string {
 	_, zone := kce_asg.GetNodeGroupNameAndZone(asg)
 	return zone
 }
-func (client *Client) SetDesiredCapacitys(input *kce_asg.SetDesiredCapacityInput, asg *kce_asg.KceAsg) ([]byte, error){
+func (client *Client) SetDesiredCapacity(input *kce_asg.SetDesiredCapacityInput, asg *kce_asg.KceAsg) ([]byte, error){
 	query := "Action=ModifyClusterAsg&Version=" + openApiVersion  //"2018-03-14"-
 	klog.Info()
 	postBody := DesiredCapacityBody{
