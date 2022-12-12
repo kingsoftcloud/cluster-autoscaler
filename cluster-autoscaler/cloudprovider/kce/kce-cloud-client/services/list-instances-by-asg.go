@@ -23,7 +23,7 @@ func (client *Client) DescribeScalingInstance(InstanceIds []string,projectIds []
 		return nil,nil
 	}
 	for index, id := range InstanceIds {
-		query = query + fmt.Sprintf("&InstanceId.%d=%d", index+1, id)
+		query = query + fmt.Sprintf("&InstanceId.%d=%s", index+1, id)
 	}
 	for index, id := range projectIds {
 		query = query + fmt.Sprintf("&ProjectId.%d=%d", index+1, id)
