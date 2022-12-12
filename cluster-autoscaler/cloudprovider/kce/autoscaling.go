@@ -478,6 +478,9 @@ func (a *autoScalingWrapper) DetachInstances(asg *kce_asg.KceAsg, instanceIds []
 				}
 			}
 		}
+		if len(instances.Instances) <= 0 {
+			return fmt.Errorf("Invalide instanceId. ")
+		}
 	}else{
 		klog.V(3).Infof("Describe instances by ASGName: %s failed ,because: %v", asg.Name, err)
 		return  err

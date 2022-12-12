@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"k8s.io/autoscaler/cluster-autoscaler/cloudprovider/kce/kce-asg"
+	"k8s.io/klog/v2"
 )
 func (client *Client) ListInstancesByAsgs2018(asg *kce_asg.KceAsg) ([]byte, error) {
 	query := "Action=DescribeAutoScalerAllVm&Version=" + openApiVersion + "&AutoScalerGroupId=" + client.AutoScalerGroupId(asg) + "&ClusterId=" + client.ClusterId
@@ -23,5 +24,6 @@ func (client *Client) DescribeScalingInstance(InstanceIds []string,projectIds []
 	for index, id := range projectIds {
 		query = query + fmt.Sprintf("&ProjectId.%d=%d", index+1, id)
 	}
+	klog.V(5).Infof("query is %s",query)
 	return DoRequest2016(client, query, "")
 }
