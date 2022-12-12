@@ -76,7 +76,7 @@ func buildAsgFromSpec(value string, manager *KceManager) (*KceNodeGroup, error) 
 	if buildError != nil {
 		return KceNodeGroup, nil
 	}
-	return nil, err
+	return KceNodeGroup, err
 }
 
 func buildAsg(manager *KceManager, minSize int, maxSize int, id string, regionId string) (*KceNodeGroup , error){
