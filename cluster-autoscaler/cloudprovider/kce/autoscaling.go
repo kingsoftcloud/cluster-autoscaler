@@ -337,7 +337,7 @@ func (a *autoScalingWrapper) InstancesByAsg(asg * kce_asg.KceAsg) (*InstanceList
 		}
 		return &instances, err
 	}
-	klog.V(3).Infof("KCE CA list instances by ASGName: %s failed ,because: %v", asg.Name, err)
+	klog.V(3).Infof("KCE CA list instances by ASG Name: %s failed ,because: %v", asg.Name, err)
 	return nil, err
 }
 
