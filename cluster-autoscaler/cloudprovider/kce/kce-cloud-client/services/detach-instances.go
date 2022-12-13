@@ -12,9 +12,8 @@ func (client *Client) DetachInstancesById(asg *kce_asg.KceAsg, instanceIDs []str
 		query = query + fmt.Sprintf("&ScalingInstanceId.%d=%s", index+1, id)
 	}
 	klog.V(5).Infof("query is %s",query)
-	return nil,nil
-	//klog.Infof("\n####### Detach Instances in ASG %s ####### \n\tinstanceIDs: %v", client.AutoScalerGroupId(asg), instanceIDs)
-	//return DoRequest2016(client, query, "")
+	klog.Infof("\n####### Detach Instances in ASG %s ####### \n\tinstanceIDs: %v", client.AutoScalerGroupId(asg), instanceIDs)
+	return DoRequest2016(client, query, "")
 }
 
 

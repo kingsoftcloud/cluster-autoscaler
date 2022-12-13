@@ -19,8 +19,8 @@ func (client *Client) DescribeScalingInstance(InstanceIds []string,projectIds []
 	//query := "Action=DescribeInstances&Version=" + openApiVersion2016 + "&InstanceId.1=" + id
 	query := "Action=DescribeInstances&Version=" + openApiVersion2016
 	if len(InstanceIds)==0{
-		klog.V(5).Infof("Please check the instanceId",InstanceIds)
-		return nil,nil
+		klog.V(5).Infof("Please check the instance Id list,it can not be nil")
+		return nil,fmt.Errorf("please check the instance Id list,it can not be nil")
 	}
 	for index, id := range InstanceIds {
 		query = query + fmt.Sprintf("&InstanceId.%d=%s", index+1, id)
