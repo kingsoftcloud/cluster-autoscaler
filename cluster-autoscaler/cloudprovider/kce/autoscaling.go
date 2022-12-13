@@ -291,7 +291,8 @@ func (a *autoScalingWrapper) getProjectIdByAsgId(asg * kce_asg.KceAsg) (projectI
 func  (a *autoScalingWrapper)  GetHostNameById (ids []string,asg * kce_asg.KceAsg)([]string,error){
 	data, err :=a.DescribeScalingInstance(ids,[]int64{asg.ProjectId})
 	if(err != nil) {
-		klog.Errorf("Invalid ASG %s, error: %v", err)
+		klog.Errorf("Invalid ASG %s, error: %v", asg.Name,err)
+		return nil,err
 	}
 	var resp InstanceResponse
 	err = json.Unmarshal(data, &resp)
