@@ -171,17 +171,12 @@ func getKceClient(cfg *config.CloudConfig) (client *services.Client, err error) 
 }
 
 func (a *autoScalingWrapper) SetDesiredCapacity (input *kce_asg.SetDesiredCapacityInput, asg * kce_asg.KceAsg) (bool, error) {
-	info, err :=a.ModifyScalingGroup(input,asg)
-	var resp CheckResponse
-	err = json.Unmarshal(info, &resp)
+	_, err :=a.ModifyScalingGroup(input,asg)
 	if err != nil {
-		klog.Errorf("Invalid ASG %s, error: %v", asg.Name, err)
-		return false,err
+	   klog.Errorf("set kce cluster autoscaling %s current size %s failed, error: %v", asg.Name, aws.StringValue(input.DesiredCapacity), err)	
+           return false,err
 	}
-	if (!resp.Return){
-		klog.Errorf("Invalid ASG %s, error: asg can't sell", asg.Name)
-		return false,err
-	}
+	klog.V(3).Infof("set kce cluster autoscaling %s current size %s successfully", asg.Name, aws.StringValue(input.DesiredCapacity))
 	return true,nil
 }
 
